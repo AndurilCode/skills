@@ -34,6 +34,10 @@ Twelve frameworks organized by what kind of thinking is needed.
 - [`scenario-planning`](skills/scenario-planning/SKILL.md) — Maps plausible futures across key uncertainties and stress-tests strategy against each.
 - [`stakeholder-power-mapping`](skills/stakeholder-power-mapping/SKILL.md) — Maps who has power and interest, surfaces informal influence networks, designs engagement strategies.
 
+### Generate New Options
+
+- [`lateral-thinking`](skills/lateral-thinking/SKILL.md) — Deliberately escapes dominant patterns to generate non-obvious alternatives. Use when analytical thinking has hit a ceiling and all solutions feel like variations of the same idea.
+
 ---
 
 ## Chaining Skills
@@ -65,7 +69,8 @@ skills/
 ├── second-order-thinking/
 ├── stakeholder-power-mapping/
 ├── systems-thinking/
-└── theory-of-constraints/
+├── theory-of-constraints/
+└── lateral-thinking/
     └── SKILL.md
 ```
 
