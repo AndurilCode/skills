@@ -1,6 +1,6 @@
 ---
 name: reasoning-orchestrator
-description: Apply this skill first whenever the user presents a problem, question, or situation that requires structured thinking — before reaching for any specific reasoning framework. Triggers on any substantive request to evaluate, analyze, diagnose, decide, design, improve, understand, or learn from something. This is the entry point for the reasoning skill collection: it reads the situation, selects the right skill(s) to apply, sequences them, routes between them based on what each run surfaces, and determines whether skills should run sequentially or in parallel via subagents. If you're unsure which reasoning skill to use, always start here.
+description: "Apply this skill first whenever the user presents a problem, question, or situation that requires structured thinking — before reaching for any specific reasoning framework. Triggers on any substantive request to evaluate, analyze, diagnose, decide, design, improve, understand, or learn from something. This is the entry point for the reasoning skill collection: it reads the situation, selects the right skill(s) to apply, sequences them, routes between them based on what each run surfaces, and determines whether skills should run sequentially or in parallel via subagents. If you're unsure which reasoning skill to use, always start here."
 ---
 
 # Reasoning Orchestrator
