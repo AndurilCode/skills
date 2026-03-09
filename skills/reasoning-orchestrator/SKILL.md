@@ -62,8 +62,9 @@ Using the triage output and the routing table below, produce a numbered executio
 | Plan / design needs validation | PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: cognitive-bias-detection → decision-synthesis |
 | Stuck, all solutions feel the same | SEQUENTIAL: epistemic-mapping → PARALLEL: lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking → SEQUENTIAL: inversion-premortem → decision-synthesis |
 | Need to decide between options | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → decision-synthesis |
+| Need to decide — quantitative / financial / probabilistic stakes | SEQUENTIAL: decision-intelligence → decision-synthesis |
 | Something went wrong / post-mortem | SEQUENTIAL: retrospective-counterfactual → PARALLEL: five-whys-root-cause ∥ causal-inference → SEQUENTIAL: cognitive-bias-detection |
-| Long-term strategic commitment | PARALLEL: epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework → PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: stakeholder-power-mapping → decision-synthesis |
+| Long-term strategic commitment | PARALLEL: epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework → PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → SEQUENTIAL: decision-intelligence → PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: stakeholder-power-mapping → decision-synthesis |
 | Blocked / people won't adopt | PARALLEL: stakeholder-power-mapping ∥ second-order-thinking ∥ causal-inference → decision-synthesis |
 
 Write the plan in this format:
@@ -199,4 +200,5 @@ After completing any step, use this table to adjust the plan if findings warrant
 | analogical-thinking | skills/analogical-thinking/SKILL.md | lateral-thinking, first-principles-thinking |
 | first-principles-thinking | skills/first-principles-thinking/SKILL.md | lateral-thinking, analogical-thinking |
 | decision-synthesis | skills/decision-synthesis/SKILL.md | runs after all others |
+| decision-intelligence | skills/decision-intelligence/SKILL.md | probabilistic-thinking, fermi-estimation, scenario-planning |
 | retrospective-counterfactual | skills/retrospective-counterfactual/SKILL.md | five-whys-root-cause, causal-inference |
