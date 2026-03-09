@@ -61,8 +61,9 @@ Using the triage output and the routing table below, produce a numbered executio
 | Don't understand the system / why it's failing | PARALLEL: systems-thinking ∥ theory-of-constraints ∥ causal-inference → SEQUENTIAL: five-whys-root-cause → decision-synthesis |
 | Plan / design needs validation | PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: cognitive-bias-detection → decision-synthesis |
 | Stuck, all solutions feel the same | SEQUENTIAL: epistemic-mapping → PARALLEL: lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking → SEQUENTIAL: inversion-premortem → decision-synthesis |
-| Need to decide between options | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → decision-synthesis |
-| Need to decide — quantitative / financial / probabilistic stakes | SEQUENTIAL: decision-intelligence → decision-synthesis |
+| Need to decide between options (comparing A vs B vs C) | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → decision-synthesis |
+| Single decision, estimable odds, bias likely active (sunk cost / survivorship / gut vs math) | SEQUENTIAL: decision-intelligence → decision-synthesis |
+| Financial bet or investment sizing | SEQUENTIAL: decision-intelligence (Kelly Criterion — only skill covering position sizing) |
 | Something went wrong / post-mortem | SEQUENTIAL: retrospective-counterfactual → PARALLEL: five-whys-root-cause ∥ causal-inference → SEQUENTIAL: cognitive-bias-detection |
 | Long-term strategic commitment | PARALLEL: epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework → PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → SEQUENTIAL: decision-intelligence → PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: stakeholder-power-mapping → decision-synthesis |
 | Blocked / people won't adopt | PARALLEL: stakeholder-power-mapping ∥ second-order-thinking ∥ causal-inference → decision-synthesis |
@@ -174,6 +175,8 @@ After completing any step, use this table to adjust the plan if findings warrant
 | generative panel (P2) | All options weak | epistemic-mapping — frame may be wrong (sequential, restart) |
 | uncertainty panel (P4) | High uncertainty persists | inversion-premortem on worst-case scenario (sequential) |
 | decision-synthesis | Key assumption too uncertain | epistemic-mapping → validate before committing |
+| decision-intelligence | Probability estimates feel shaky | fermi-estimation ∥ probabilistic-thinking first, then re-run |
+| decision-intelligence | Decision confirmed, options remain open | decision-synthesis to land the final call |
 | retrospective-counterfactual | Systemic cause found | systems-thinking ∥ five-whys-root-cause (parallel) |
 
 ---
