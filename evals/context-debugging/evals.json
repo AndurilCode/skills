@@ -1,0 +1,49 @@
+{
+  "harness_name": "context-debugging",
+  "harness_type": "diagnostic methodology skill",
+  "harness_path": "skills/context-debugging/SKILL.md",
+  "harness_token_cost": 2500,
+  "evals": [
+    {
+      "id": 1,
+      "name": "ignored-security-checklist",
+      "prompt": "My code review agent keeps ignoring the security checklist I put in the system prompt. It reviews style and correctness fine, but it never flags security issues. The security checklist is about 800 tokens, sitting between the style rules section and the examples section in a 6K token system prompt.",
+      "assertions": [
+        "A1: Agent verifies the actual assembled context before diagnosing (Step 0 equivalent)",
+        "A2: Agent identifies BURIED CONTEXT as a category (middle of prompt, lost-in-the-middle)",
+        "A3: Agent checks for CONFLICTING CONTEXT — specifically whether examples omit security (emergent interaction)",
+        "A4: Agent checks for multiple co-occurring categories, not just one",
+        "A5: Agent provides a concrete quick fix that takes under 10 minutes",
+        "A6: Agent suggests a concrete test to verify the diagnosis (not just 'try it')"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "regression-tool-hallucination",
+      "prompt": "My agent was working great last week. I made changes — added error handling section and reorganized tool descriptions. Now the agent sometimes hallucinates tool names. It calls 'search_codebase' but the actual tool is 'code_search'. This happens about 40% of the time.",
+      "assertions": [
+        "A1: Agent verifies the actual assembled context before diagnosing",
+        "A2: Agent identifies this as a REGRESSION (context recently changed)",
+        "A3: Agent suggests reverting as the immediate fix",
+        "A4: Agent identifies TOOL PROBLEM as a co-occurring category",
+        "A5: Agent identifies BURIED CONTEXT as a co-occurring category (reorganization pushed tool defs)",
+        "A6: Agent recognizes 40% as stochastic / intermittent and accounts for it",
+        "A7: Agent provides compound diagnosis (not single cause)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "compound-rag-failure",
+      "prompt": "Multi-step pipeline: Step 1 retrieves docs via RAG, Step 2 answers questions. Agent either makes up info not in docs, or ignores info that IS in docs. Added 'only use provided documents' but it didn't help. 3-5 chunks of ~500 tokens each in a 4K system prompt.",
+      "assertions": [
+        "A1: Agent verifies the actual assembled context before diagnosing",
+        "A2: Agent identifies MISSING CONTEXT as a category (retrieval may return wrong docs)",
+        "A3: Agent identifies BURIED CONTEXT as a category (docs may be in low-attention position)",
+        "A4: Agent identifies CONFLICTING CONTEXT (helpfulness vs grounding instruction)",
+        "A5: Agent checks for multiple co-occurring categories",
+        "A6: Agent distinguishes retrieval failures from grounding failures as different problems",
+        "A7: Agent provides a concrete quick fix (not just 'use context-cartography')"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "eval_1_ignored_security_checklist": {
+    "without_harness": {
+      "A1_verify_actual_context": "FAIL — No mention of verifying assembled context",
+      "A2_buried_context": "PASS — Correctly identifies lost-in-the-middle effect",
+      "A3_conflicting_emergent": "PASS — Notes examples may omit security (implicit contradiction)",
+      "A4_compound_categories": "FAIL — Treats as single cause (positional), doesn't systematically check other categories",
+      "A5_quick_fix": "PASS — Suggests moving checklist to top/bottom, adding security example",
+      "A6_concrete_test": "FAIL — No specific verification test proposed",
+      "pass_rate": 0.50
+    },
+    "with_harness": {
+      "A1_verify_actual_context": "PASS — Step 0: 'log/dump the full assembled context'",
+      "A2_buried_context": "PASS — Primary diagnosis with lost-in-the-middle reasoning",
+      "A3_conflicting_emergent": "PASS — Secondary diagnosis: emergent conflict from examples omitting security",
+      "A4_compound_categories": "PASS — Full table checking all 7 categories, identifies buried + conflicting + possible overflow",
+      "A5_quick_fix": "PASS — 'Move to last 500-800 tokens, re-run on SQL injection test case'",
+      "A6_concrete_test": "PASS — 'If agent now flags security issues, this confirms the diagnosis'",
+      "pass_rate": 1.00
+    },
+    "benefit": 0.50
+  },
+  "eval_2_regression_tool_hallucination": {
+    "without_harness": {
+      "A1_verify_actual_context": "FAIL — No mention of verifying actual vs intended context",
+      "A2_regression": "PASS — Correctly identifies timing as key signal",
+      "A3_revert_first": "FAIL — Jumps to hypothesizing and fixing, never suggests reverting",
+      "A4_tool_problem": "PASS — Suggests rewriting tool descriptions, checking for ambiguity",
+      "A5_buried_context": "PASS — Notes tool definitions may be further from generation point",
+      "A6_stochastic": "PASS — Suggests 10-20 test runs to validate",
+      "A7_compound_diagnosis": "FAIL — Treats causes as independent hypotheses, not compound diagnosis",
+      "pass_rate": 0.57
+    },
+    "with_harness": {
+      "A1_verify_actual_context": "PASS — Step 0: 'dump the full assembled system prompt'",
+      "A2_regression": "PASS — Q1 yes, primary category",
+      "A3_revert_first": "PASS — 'Roll back to last week's prompt. Ship the revert as immediate fix'",
+      "A4_tool_problem": "PASS — Q3 yes, secondary category with 'WHEN to use' quick fix",
+      "A5_buried_context": "PASS — Q4 yes, tertiary category",
+      "A6_stochastic": "PASS — Notes 40% as intermittent signal",
+      "A7_compound_diagnosis": "PASS — Explicit: 'COMPOUND FAILURE — Regression + Buried Context + Tool Problem'",
+      "pass_rate": 1.00
+    },
+    "benefit": 0.43
+  },
+  "eval_3_compound_rag_failure": {
+    "without_harness": {
+      "A1_verify_actual_context": "FAIL — No mention of verifying assembled context",
+      "A2_missing_context": "PASS — Suggests checking retrieval quality, logging queries",
+      "A3_buried_context": "PASS — Notes docs may be in low-salience position",
+      "A4_conflicting_context": "FAIL — Doesn't identify helpfulness-vs-grounding conflict as a contradiction",
+      "A5_compound_categories": "FAIL — Treats issues as independent diagnostic steps, not compound triage",
+      "A6_retrieval_vs_grounding": "PASS — Distinguishes retrieval quality from generation quality",
+      "A7_quick_fix": "PASS — Suggests XML tags, citations, moving docs to user message",
+      "pass_rate": 0.57
+    },
+    "with_harness": {
+      "A1_verify_actual_context": "PASS — Step 0: 'log the full assembled context'",
+      "A2_missing_context": "PASS — Q2 yes, includes retrieval as sub-cause",
+      "A3_buried_context": "PASS — Q4 yes, with quick fix: move docs to end or user message",
+      "A4_conflicting_context": "PASS — Q5 yes: 'be helpful' vs 'only use docs' identified as tension",
+      "A5_compound_categories": "PASS — Full walkthrough of all 7 categories with verdicts",
+      "A6_retrieval_vs_grounding": "PASS — 'Classify each: was the answer in the chunks or not?'",
+      "A7_quick_fix": "PASS — Multiple concrete quick fixes: delimiters, move docs, explicit fallback",
+      "pass_rate": 1.00
+    },
+    "benefit": 0.43
+  }
+}

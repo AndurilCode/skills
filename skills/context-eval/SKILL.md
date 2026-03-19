@@ -25,11 +25,10 @@ Common examples include project-level rules and instructions, coding guidelines,
 1. Define what you're evaluating (the harness)
 2. Write 3-5 realistic task prompts
 3. Define success criteria (assertions)
-4. Run tasks WITH the harness
-5. Run tasks WITHOUT the harness (baseline)
-6. Grade both against assertions
-7. Compare: did the harness help?
-8. If iterating: modify the harness, repeat from step 4
+4. Run tasks WITH and WITHOUT the harness (you MUST actually run them — see Step 4)
+5. Grade both against assertions
+6. Compare: did the harness help?
+7. If iterating: modify the harness, repeat from step 4
 ```
 
 ---
@@ -108,9 +107,32 @@ Update `evals/evals.json` with the assertions. Explain to the user what each ass
 
 ## Step 4: Run the Evaluations
 
-### With subagent support
+**You MUST actually run the evals, not just reason about them.** Post-hoc analysis of existing outputs is not evaluation — it's rationalization. Spawn subagents, get real outputs, then grade.
 
-If the agent environment supports spawning sub-tasks (parallel or sequential), launch pairs of runs for each eval — one with the harness, one without. Save outputs to:
+### Determine the eval mode
+
+The harness type determines how you run:
+
+**Repo-specific harness** (coding guidelines, project docs, retrieval pipelines): The eval tasks operate on the real codebase. Subagents work within the repo — one with the harness loaded, one without.
+
+**Methodology harness** (skills, reasoning frameworks, diagnostic workflows): There is no repo to run against. You MUST synthesize realistic scenarios and dispatch subagents that role-play the scenario. Each subagent receives the scenario prompt; the with-harness agent also receives the skill/methodology content. The subagent's output IS the eval output.
+
+**CRITICAL for methodology harnesses:** Do not grade outputs you already have from prior conversation. The eval must produce fresh, independent outputs from agents that don't share your context. Reusing prior outputs conflates "did the skill help?" with "did having a long conversation about the skill help?"
+
+### Running with subagents (default)
+
+For each eval, launch a pair of subagents:
+
+**Without-harness agent:**
+- Receives: the scenario prompt only
+- Instruction: "Respond to this scenario as you naturally would. Describe your approach step by step."
+- Does NOT receive the harness content
+
+**With-harness agent:**
+- Receives: the harness content + the scenario prompt
+- Instruction: "You have access to the following skill/methodology. Follow it if applicable. Respond to this scenario step by step."
+
+Launch pairs in parallel where possible. Save outputs to:
 
 ```
 workspace/
@@ -135,14 +157,16 @@ The `eval_metadata.json` for each eval:
 }
 ```
 
-### Without subagent support
+### Without subagent support (fallback only)
 
-Run each eval yourself, sequentially. For each:
+If the environment genuinely cannot spawn subagents, run each eval yourself sequentially. For each:
 
-1. **With harness**: Read the context artifact, then follow its instructions to complete the task
-2. **Without harness**: Complete the same task using only the bare prompt (don't use knowledge from the harness you just read — treat it as a fresh attempt)
+1. **Without harness**: Complete the task using only the bare prompt. Do this FIRST — before reading the harness. You cannot un-know the harness content.
+2. **With harness**: Read the context artifact, then follow its instructions to complete the task.
 
 Save outputs to the filesystem. Be honest about the limitation: you wrote the harness and you're also running it, so you have full context. The human review step compensates.
+
+**This fallback is significantly weaker than subagent-based evaluation.** Flag the limitation in the report.
 
 ### Capturing Metrics
 

@@ -1,0 +1,99 @@
+{
+  "metadata": {
+    "harness_name": "context-debugging",
+    "harness_type": "diagnostic methodology skill",
+    "harness_token_cost": 2500,
+    "condensed_token_cost_in_tests": 800,
+    "timestamp": "2026-03-19T00:00:00Z",
+    "num_evals": 3,
+    "iteration": 1
+  },
+  "results": {
+    "with_harness": {
+      "pass_rate": {"mean": 1.00, "stddev": 0.00}
+    },
+    "without_harness": {
+      "pass_rate": {"mean": 0.55, "stddev": 0.04}
+    },
+    "delta": {
+      "pass_rate": "+0.45",
+      "benefit_per_kilotoken": 0.56
+    }
+  },
+  "per_eval_breakdown": [
+    {
+      "eval_id": 1,
+      "eval_name": "ignored-security-checklist",
+      "with_harness_pass_rate": 1.00,
+      "without_harness_pass_rate": 0.50,
+      "benefit": 0.50,
+      "discriminating_assertions": [
+        "A1: Verify actual context (Step 0)",
+        "A4: Compound category check",
+        "A6: Concrete verification test"
+      ],
+      "non_discriminating_assertions": [
+        "A2: Buried context identification (both passed)",
+        "A3: Conflicting/emergent interaction (both passed)",
+        "A5: Quick fix (both passed)"
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "regression-tool-hallucination",
+      "with_harness_pass_rate": 1.00,
+      "without_harness_pass_rate": 0.57,
+      "benefit": 0.43,
+      "discriminating_assertions": [
+        "A1: Verify actual context",
+        "A3: Revert as immediate fix",
+        "A7: Compound diagnosis"
+      ],
+      "non_discriminating_assertions": [
+        "A2: Regression identification (both passed)",
+        "A4: Tool problem identification (both passed)",
+        "A5: Buried context (both passed)",
+        "A6: Stochastic awareness (both passed)"
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "compound-rag-failure",
+      "with_harness_pass_rate": 1.00,
+      "without_harness_pass_rate": 0.57,
+      "benefit": 0.43,
+      "discriminating_assertions": [
+        "A1: Verify actual context",
+        "A4: Conflicting context (helpfulness vs grounding)",
+        "A5: Compound category check"
+      ],
+      "non_discriminating_assertions": [
+        "A2: Missing context / retrieval (both passed)",
+        "A3: Buried context (both passed)",
+        "A6: Retrieval vs grounding distinction (both passed)",
+        "A7: Quick fix (both passed)"
+      ]
+    }
+  ],
+  "diagnosis": {
+    "verdict": "EFFECTIVE",
+    "reasoning": "Mean benefit of +0.45 across all 3 evals with consistent improvement. The skill produces 100% pass rate on all assertions vs 55% baseline. The benefit is concentrated in three areas the baseline consistently misses: (1) Step 0 verification, (2) compound failure detection, (3) structured revert-first discipline.",
+    "highest_impact_areas": [
+      "Step 0 — Verify actual context (discriminating in all 3 evals)",
+      "Compound failure detection (discriminating in all 3 evals)",
+      "Revert-first discipline for regressions (discriminating in eval 2)"
+    ],
+    "non_discriminating_assertions": [
+      "Basic category identification (buried context, missing context) — baseline already does this reasonably well",
+      "Quick fix suggestions — baseline produces decent ad-hoc fixes"
+    ],
+    "wasted_context": [
+      "Individual category descriptions for common categories (buried, missing) add tokens but baseline already identifies these. The skill's value is in the TRIAGE STRUCTURE and COMPOUND DETECTION, not in teaching what buried context is."
+    ],
+    "recommendations": [
+      "The skill's unique value is Step 0, compound triage, and revert-first — consider making these even more prominent",
+      "Category descriptions for well-known issues (buried context, missing context) could be condensed since baseline agents already diagnose these",
+      "Consider adding more examples of compound failures since that's the highest-impact differentiator"
+    ]
+  }
+}
