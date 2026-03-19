@@ -31,6 +31,8 @@ Common examples include project-level rules and instructions, coding guidelines,
 7. If iterating: modify the harness, repeat from step 4
 ```
 
+**Use tasks to track progress.** Create a task for each step above and update status as you go (in_progress when starting, completed when done). This eval is a multi-step process — task tracking prevents skipping steps, losing track of which evals have been run, or forgetting to grade before computing the delta.
+
 ---
 
 ## Step 1: Define the Harness Under Test
