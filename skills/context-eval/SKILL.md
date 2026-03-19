@@ -33,6 +33,20 @@ Common examples include project-level rules and instructions, coding guidelines,
 
 **Use tasks to track progress.** Create a task for each step above and update status as you go (in_progress when starting, completed when done). This eval is a multi-step process — task tracking prevents skipping steps, losing track of which evals have been run, or forgetting to grade before computing the delta.
 
+### Before You Start — Verify Companion Files
+
+This skill has companion scripts and references in the same directory. Before beginning, verify these exist:
+
+- `grader.md` — grading protocol (used in Step 5)
+- `schemas.md` — JSON schemas for eval artifacts
+- `generate_report.py` — generates the eval report (used in Step 6)
+- `aggregate_benchmark.py` — aggregates grading results
+- `estimate_tokens.py` — estimates harness token cost (used in Step 1)
+- `comparator.md` — blind comparison agent (optional, Step 8)
+- `analyzer.md` — impact analysis agent (optional, Step 8)
+
+If any are missing, the skill still works manually — but the scripts automate Steps 5-6 and produce standardized output. **Use them when available.**
+
 ---
 
 ## Step 1: Define the Harness Under Test
@@ -187,13 +201,21 @@ If the agent runtime provides token counts or duration metrics on task completio
 
 ## Step 5: Grade the Results
 
-For each run, evaluate every assertion against the outputs. Read `grader.md` for the full grading protocol. The key principles:
+**Read `grader.md` first** — it defines the full grading protocol. Do not grade without reading it.
 
-- **PASS**: Clear evidence the assertion holds, reflecting genuine task completion
+For each assertion, grade BOTH the with-harness and without-harness outputs:
+
+- **PASS**: Clear evidence the assertion holds — cite the specific evidence
 - **FAIL**: No evidence, contradicting evidence, or superficial compliance
-- **Be skeptical**: Surface-level compliance (right filename, wrong content) is a FAIL
+- **Be skeptical**: Default to FAIL when uncertain. Surface-level compliance is a FAIL.
 
-Save grading to `grading.json` in each run directory. See `schemas.md` for the exact schema.
+For each assertion, classify its **discrimination power**:
+- **Discriminating**: passes with-harness, fails without — this measures harness value
+- **Non-discriminating (both pass)**: baseline already handles this
+- **Non-discriminating (both fail)**: overly hard, or gap in both approaches
+- **Inverse**: passes without, fails with — harness is hurting this outcome
+
+Save grading to `grading.json` in each eval directory. See `schemas.md` for the exact schema.
 
 Beyond the predefined assertions, extract and verify implicit claims from the output. This catches issues assertions miss.
 
@@ -206,29 +228,27 @@ After grading, ask: are these assertions actually discriminating? An assertion t
 
 ## Step 6: Compute the Delta
 
-This is where context eval diverges from generic skill eval. You're measuring the **marginal value of context**.
+**Use `generate_report.py` to compute the delta and generate the report:**
 
-### The Context Benefit Score
+```bash
+python3 <this-skill-dir>/generate_report.py \
+  workspace/iteration-N \
+  --harness-name "my-harness" \
+  --harness-type "harness type" \
+  --harness-tokens 1500
+```
 
-For each eval, compute:
+The script reads `grading.json` from each eval directory, computes pass rates, benefit delta, benefit-per-kilotoken, and assigns a verdict. If the script is not available, compute manually:
 
 ```
 benefit = with_harness_pass_rate - without_harness_pass_rate
-```
-
-Aggregate across all evals:
-
-```
 mean_benefit = average(benefits across all evals)
-token_cost = tokens_consumed_by_harness_context
 efficiency = mean_benefit / (token_cost / 1000)
 ```
 
-This gives you a **benefit-per-kilotoken** score — how much improvement each 1K tokens of context buys you.
-
 ### The Report
 
-Generate `context_eval_report.json`:
+The script generates `context_eval_report.json`:
 
 ```json
 {
@@ -304,7 +324,7 @@ Show the user:
 
 First, aggregate the benchmark data:
 ```bash
-python <context-eval-path>/aggregate_benchmark.py \
+python <this-skill-dir>/aggregate_benchmark.py \
   workspace/iteration-N \
   --harness-name "my-harness" \
   --harness-tokens 1500
@@ -312,7 +332,7 @@ python <context-eval-path>/aggregate_benchmark.py \
 
 Then generate the report:
 ```bash
-python <context-eval-path>/generate_report.py \
+python <this-skill-dir>/generate_report.py \
   workspace/iteration-N \
   --harness-name "my-harness" \
   --harness-type "project coding guidelines" \
@@ -322,12 +342,12 @@ python <context-eval-path>/generate_report.py \
 Then launch the interactive viewer:
 ```bash
 # Server mode (opens in browser, saves feedback to workspace)
-python <context-eval-path>/generate_viewer.py \
+python <this-skill-dir>/generate_viewer.py \
   workspace/iteration-N \
   --harness-name "my-harness"
 
 # Static mode (for headless environments)
-python <context-eval-path>/generate_viewer.py \
+python <this-skill-dir>/generate_viewer.py \
   workspace/iteration-N \
   --harness-name "my-harness" \
   --static report.html
@@ -395,7 +415,7 @@ For users who want to optimize their harness automatically, the `optimize_harnes
 ### How It Works
 
 ```bash
-python <context-eval-path>/optimize_harness.py \
+python <this-skill-dir>/optimize_harness.py \
   --harness /path/to/harness \
   --evals /path/to/evals.json \
   --workspace /path/to/optimize-workspace \
