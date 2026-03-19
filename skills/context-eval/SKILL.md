@@ -43,7 +43,7 @@ Start by understanding what context artifact the user wants to evaluate. Read th
 2. **What does it claim to do?** The expected behavior improvement.
 3. **What tasks should benefit?** The domain where it should help.
 4. **What's the baseline?** What the agent looks like *without* this context.
-5. **What does it cost?** Estimate the token footprint. Use `scripts/estimate_tokens.py` for files and directories.
+5. **What does it cost?** Estimate the token footprint. Use `estimate_tokens.py` for files and directories.
 
 After reading the artifact, assess:
 - **Specificity**: does it give precise instructions or vague guidance?
@@ -187,13 +187,13 @@ If the agent runtime provides token counts or duration metrics on task completio
 
 ## Step 5: Grade the Results
 
-For each run, evaluate every assertion against the outputs. Read `references/grader.md` for the full grading protocol. The key principles:
+For each run, evaluate every assertion against the outputs. Read `grader.md` for the full grading protocol. The key principles:
 
 - **PASS**: Clear evidence the assertion holds, reflecting genuine task completion
 - **FAIL**: No evidence, contradicting evidence, or superficial compliance
 - **Be skeptical**: Surface-level compliance (right filename, wrong content) is a FAIL
 
-Save grading to `grading.json` in each run directory. See `references/schemas.md` for the exact schema.
+Save grading to `grading.json` in each run directory. See `schemas.md` for the exact schema.
 
 Beyond the predefined assertions, extract and verify implicit claims from the output. This catches issues assertions miss.
 
@@ -304,7 +304,7 @@ Show the user:
 
 First, aggregate the benchmark data:
 ```bash
-python <context-eval-path>/scripts/aggregate_benchmark.py \
+python <context-eval-path>/aggregate_benchmark.py \
   workspace/iteration-N \
   --harness-name "my-harness" \
   --harness-tokens 1500
@@ -312,7 +312,7 @@ python <context-eval-path>/scripts/aggregate_benchmark.py \
 
 Then generate the report:
 ```bash
-python <context-eval-path>/scripts/generate_report.py \
+python <context-eval-path>/generate_report.py \
   workspace/iteration-N \
   --harness-name "my-harness" \
   --harness-type "project coding guidelines" \
@@ -322,12 +322,12 @@ python <context-eval-path>/scripts/generate_report.py \
 Then launch the interactive viewer:
 ```bash
 # Server mode (opens in browser, saves feedback to workspace)
-python <context-eval-path>/eval-viewer/generate_viewer.py \
+python <context-eval-path>/generate_viewer.py \
   workspace/iteration-N \
   --harness-name "my-harness"
 
 # Static mode (for headless environments)
-python <context-eval-path>/eval-viewer/generate_viewer.py \
+python <context-eval-path>/generate_viewer.py \
   workspace/iteration-N \
   --harness-name "my-harness" \
   --static report.html
@@ -368,9 +368,9 @@ For situations where you want a more rigorous comparison between with-harness an
 
 1. Take the outputs from a with-harness run and a without-harness run
 2. Randomly assign them as "A" and "B"
-3. Spawn a comparator subagent that reads `agents/comparator.md`
+3. Spawn a comparator subagent that reads `comparator.md`
 4. The comparator judges quality without knowing which output used the harness
-5. After the comparator picks a winner, spawn an analyzer subagent that reads `agents/analyzer.md`
+5. After the comparator picks a winner, spawn an analyzer subagent that reads `analyzer.md`
 6. The analyzer "unblinds" the results and maps the harness sections to their impact
 
 The comparator adds a **Context Signal** rubric dimension that evaluates domain-specific terminology, specificity, and edge case handling — the signatures of effective context engineering. This helps detect whether the harness is actually injecting useful knowledge or just adding tokens.
@@ -395,7 +395,7 @@ For users who want to optimize their harness automatically, the `optimize_harnes
 ### How It Works
 
 ```bash
-python <context-eval-path>/scripts/optimize_harness.py \
+python <context-eval-path>/optimize_harness.py \
   --harness /path/to/harness \
   --evals /path/to/evals.json \
   --workspace /path/to/optimize-workspace \
@@ -439,7 +439,7 @@ The optimizer is designed to be called *after* an initial evaluation round. The 
 
 ## Context Engineering Anti-Patterns to Flag
 
-During evaluation, watch for these common failures and flag them to the user. See `references/anti-patterns.md` for the extended guide with eval signal detection and metric signatures.
+During evaluation, watch for these common failures and flag them to the user. See `anti-patterns.md` for the extended guide with eval signal detection and metric signatures.
 
 **Token Firehose**: The harness dumps too much context, overwhelming the model. Signal: with-harness runs are *slower* and no more accurate. Recommendation: prune to high-signal content.
 
@@ -473,27 +473,26 @@ This skill adapts to whatever the host agent can do. Check for these capabilitie
 
 ## Reference Files
 
+All files are in the same directory as this SKILL.md. Use paths relative to this skill's directory.
+
 ### Agents (read when spawning the relevant subagent)
 
-- `agents/comparator.md` — Blind comparison between with-harness and without-harness outputs. Adds a Context Signal rubric dimension.
-- `agents/analyzer.md` — Post-hoc analysis of *why* the harness helped/hurt. Produces section-level impact mapping and token efficiency analysis.
+- `comparator.md` — Blind comparison between with-harness and without-harness outputs. Adds a Context Signal rubric dimension.
+- `analyzer.md` — Post-hoc analysis of *why* the harness helped/hurt. Produces section-level impact mapping and token efficiency analysis.
 
 ### References (loaded into context as needed)
 
-- `references/grader.md` — Full grading protocol with discrimination classification
-- `references/schemas.md` — JSON schemas for all eval artifacts
-- `references/anti-patterns.md` — Extended guide to context engineering anti-patterns with metric signatures and detection checklist
+- `grader.md` — Full grading protocol with discrimination classification
+- `schemas.md` — JSON schemas for all eval artifacts
+- `anti-patterns.md` — Extended guide to context engineering anti-patterns with metric signatures and detection checklist
 
 ### Scripts
 
-- `scripts/generate_report.py` — Generates `context_eval_report.json` with verdict, benefit delta, and diagnosis
-- `scripts/aggregate_benchmark.py` — Aggregates grading results into `benchmark.json` for the viewer
-- `scripts/estimate_tokens.py` — Estimates token count of a harness file or directory
-- `scripts/optimize_harness.py` — Automated harness optimization loop (requires any LLM CLI)
-
-### Eval Viewer
-
-- `eval-viewer/generate_viewer.py` — Self-contained HTML viewer with Outputs/Benchmark/Diagnosis tabs. Supports server mode and static mode.
+- `generate_report.py` — Generates `context_eval_report.json` with verdict, benefit delta, and diagnosis
+- `aggregate_benchmark.py` — Aggregates grading results into `benchmark.json` for the viewer
+- `estimate_tokens.py` — Estimates token count of a harness file or directory
+- `optimize_harness.py` — Automated harness optimization loop (requires any LLM CLI)
+- `generate_viewer.py` — Self-contained HTML viewer with Outputs/Benchmark/Diagnosis tabs. Supports server mode and static mode.
 
 ---
 
