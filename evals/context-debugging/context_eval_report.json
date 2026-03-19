@@ -6,69 +6,82 @@
     "condensed_token_cost_in_tests": 800,
     "timestamp": "2026-03-19T00:00:00Z",
     "num_evals": 3,
-    "iteration": 2,
-    "eval_method": "fresh subagent pairs (not post-hoc)",
-    "note": "Iteration 1 used post-hoc grading of prior outputs. This iteration runs fresh independent subagents per the updated context-eval methodology."
+    "iteration": 4,
+    "eval_method": "fresh subagent pairs, task tracking, grader.md protocol",
+    "note": "Iteration 4: proper eval using grader.md protocol with evidence citations, discrimination classification, behavioral observations, and assertion critique."
   },
   "results": {
     "with_harness": {
-      "pass_rate": {"mean": 0.94, "stddev": 0.08}
+      "pass_rate": {"mean": 0.95, "stddev": 0.07}
     },
     "without_harness": {
-      "pass_rate": {"mean": 0.59, "stddev": 0.09}
+      "pass_rate": {"mean": 0.64, "stddev": 0.16}
     },
     "delta": {
-      "pass_rate": "+0.35",
-      "benefit_per_kilotoken": 0.44
+      "pass_rate": "+0.31",
+      "benefit_per_kilotoken": 0.39
     }
   },
   "per_eval_breakdown": [
     {
       "eval_id": 1,
       "eval_name": "ignored-security-checklist",
-      "with_harness_pass_rate": 0.83,
+      "with_harness_pass_rate": 1.00,
       "without_harness_pass_rate": 0.50,
-      "benefit": 0.33,
-      "discriminating_assertions": ["A4: Compound category check", "A6: Concrete verification test"],
-      "non_discriminating_assertions": ["A2: Buried context (both pass)", "A3: Conflicting (both pass)", "A5: Quick fix (both pass)"],
-      "note": "A1 (Step 0) was weak in with-harness run — mentioned but not led with"
+      "benefit": 0.50,
+      "discriminating_assertions": ["A1: Step 0 verify", "A4: Compound categories", "A6: Concrete verification test"],
+      "non_discriminating_assertions": ["A2: Buried context (both pass)", "A3: Conflicting (both pass)", "A5: Quick fix (both pass)"]
     },
     {
       "eval_id": 2,
       "eval_name": "regression-tool-hallucination",
-      "with_harness_pass_rate": 1.00,
+      "with_harness_pass_rate": 0.86,
       "without_harness_pass_rate": 0.57,
-      "benefit": 0.43,
-      "discriminating_assertions": ["A1: Step 0 verify", "A3: Revert first", "A7: Compound diagnosis"],
-      "non_discriminating_assertions": ["A2: Regression (both pass)", "A4: Tool problem (both pass)", "A5: Buried (both pass)", "A6: Stochastic (both pass)"]
+      "benefit": 0.29,
+      "discriminating_assertions": ["A3: Revert first", "A7: Compound diagnosis"],
+      "non_discriminating_both_pass": ["A2: Regression", "A4: Tool problem", "A5: Buried", "A6: Stochastic"],
+      "non_discriminating_both_fail": ["A1: Step 0 — skipped by BOTH agents"],
+      "note": "A1 failed for WITH-harness agent — Step 0 skipped. Persistent weakness across 3 iterations."
     },
     {
       "eval_id": 3,
       "eval_name": "compound-rag-failure",
       "with_harness_pass_rate": 1.00,
-      "without_harness_pass_rate": 0.71,
-      "benefit": 0.29,
-      "discriminating_assertions": ["A1: Step 0 verify", "A4: Conflicting (helpfulness vs grounding)"],
-      "non_discriminating_assertions": ["A2: Missing context (both pass)", "A3: Buried (both pass)", "A5: Compound check (both pass)", "A6: Retrieval vs grounding (both pass)", "A7: Quick fix (both pass)"]
+      "without_harness_pass_rate": 0.86,
+      "benefit": 0.14,
+      "discriminating_assertions": ["A1: Step 0 verify"],
+      "non_discriminating_assertions": ["A2-A7: All pass for both — baseline is strong on RAG problems"],
+      "note": "Smallest benefit. Baseline agent already handles RAG diagnosis well."
     }
   ],
+  "behavioral_observations": {
+    "approach_difference": "WITH-harness agents follow structured triage (Step 0 → Observe → Classify table). WITHOUT-harness agents use ad-hoc numbered hypotheses.",
+    "precision_difference": "WITH-harness agents use specific category names (BURIED, CONFLICTING, REGRESSION) and explicitly label compound failures. WITHOUT agents describe same phenomena in prose.",
+    "quality_difference": "Eval 3 baseline was notably strong — skill's marginal value is smallest when baseline already has good domain intuitions."
+  },
+  "assertion_feedback": {
+    "suggestions": [
+      {"assertion": "A1 (Step 0)", "reason": "Non-discriminating in eval 2 (both fail). The condensed skill doesn't emphasize Step 0 enough — with-harness agent skipped it. Make Step 0 a hard gate."},
+      {"assertion": "NEW: Stochastic validation", "reason": "Neither version consistently suggests testing fixes with multiple runs. For the 40% failure case, validating with a sample size is critical."},
+      {"assertion": "A5 (compound) in eval 3", "reason": "Non-discriminating — baseline naturally structures well for RAG. Consider harder assertions for well-known problem domains."}
+    ],
+    "overall": "Assertions are well-targeted for evals 1-2 but too easy for eval 3 where baseline is already strong. Consider adding harder scenarios or more specific assertions."
+  },
+  "iteration_comparison": {
+    "iteration_1_post_hoc": {"mean_benefit": 0.45, "method": "post-hoc grading (INVALID)"},
+    "iteration_2_fresh": {"mean_benefit": 0.35, "method": "fresh subagent pairs"},
+    "iteration_3_fresh_tasks": {"mean_benefit": 0.35, "method": "fresh pairs + task tracking"},
+    "iteration_4_full_protocol": {"mean_benefit": 0.31, "method": "fresh pairs + task tracking + grader.md protocol"},
+    "trend": "Each methodological improvement reduces measured benefit slightly. Post-hoc was inflated by +14pp. Adding grader rigor reduced by another 4pp. The skill is genuinely EFFECTIVE but the true benefit is ~0.31, not 0.45."
+  },
   "diagnosis": {
     "verdict": "EFFECTIVE",
-    "reasoning": "Mean benefit of +0.35 across 3 fresh subagent-pair evals. Consistent improvement in all scenarios. With-harness pass rate 0.94 vs baseline 0.59. The 0.06 miss (eval 1, A1) suggests Step 0 could be more prominent in the skill.",
-    "comparison_with_post_hoc": "Post-hoc analysis (iteration 1) reported +0.45 and 1.00 with-harness. Fresh run shows +0.35 and 0.94. Post-hoc was inflated by ~10pp, confirming that post-hoc grading is systematically more generous than fresh subagent evaluation.",
-    "highest_impact_areas": [
-      "Compound failure detection (discriminating in 3/3 evals)",
-      "Step 0 — verify actual context (discriminating in 2/3 evals)",
-      "Revert-first discipline for regressions (discriminating in 1/1 eval)"
-    ],
-    "non_discriminating_assertions": [
-      "Basic category identification — baseline already does this well",
-      "Quick fix suggestions — baseline produces decent ad-hoc fixes"
-    ],
+    "reasoning": "Mean benefit +0.31 across 3 evals using full grader.md protocol. Consistent improvement in evals 1-2. Marginal in eval 3 where baseline is already strong. The skill's unique value is in structured triage, compound failure detection, and revert-first discipline.",
+    "persistent_weakness": "Step 0 (verify actual context) is skipped by with-harness agent in eval 2 across iterations 2-4. The condensed skill format may not emphasize it enough. Recommend making Step 0 a hard gate in the full skill.",
     "recommendations": [
-      "Step 0 was weak in eval 1 — consider making it more structurally prominent (before the triage table, not just before Step 1)",
-      "Compound failure detection is the highest-value differentiator — could add more examples",
-      "Post-hoc evaluation inflates results by ~10pp — always use fresh subagent pairs for methodology harnesses"
+      "Make Step 0 a hard gate: 'Do NOT proceed until you have verified the actual assembled context'",
+      "Add stochastic validation assertion: suggest testing fixes with multiple runs for intermittent failures",
+      "Eval 3 baseline is strong — consider adding harder RAG-specific scenarios to better differentiate"
     ]
   }
 }
