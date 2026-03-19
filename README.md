@@ -1,6 +1,6 @@
 # skills
 
-Personal collection of Claude skills — structured reasoning frameworks that teach the agent *when* and *how* to apply specific thinking modes when evaluating, diagnosing, or deciding.
+Personal collection of Claude skills — structured reasoning frameworks and development methodologies that teach the agent *when* and *how* to apply specific thinking modes when evaluating, diagnosing, deciding, or engineering context.
 
 Each skill lives in its own folder and is self-contained: a `SKILL.md` with a trigger description (so Claude knows when to apply it) and a structured methodology (so it knows how).
 
@@ -8,7 +8,7 @@ Each skill lives in its own folder and is self-contained: a `SKILL.md` with a tr
 
 ## Reasoning Skills
 
-Twenty-two frameworks across seven thinking categories.
+Twenty-two frameworks across seven thinking categories, plus development methodologies for context engineering.
 
 ### Understand the System
 
@@ -49,9 +49,10 @@ Twenty-two frameworks across seven thinking categories.
 - [`decision-intelligence`](skills/decision-intelligence/SKILL.md) — Applies six probabilistic models (Expected Value, Base Rate, Sunk Cost, Bayesian Thinking, Survivorship Bias, Kelly Criterion) mandatorily and in sequence to any decision with quantifiable stakes. Produces explicit calculations and a synthesized recommendation with confidence level.
 - [`retrospective-counterfactual`](skills/retrospective-counterfactual/SKILL.md) — Reconstructs what actually caused a past outcome and what would have happened differently. Post-mortems, incident reviews, and decision quality assessment.
 
-### Evaluate Context
+### Engineer and Evaluate Context
 
-- [`context-eval`](skills/context-eval/SKILL.md) — Measures whether a context engineering harness actually improves agent outcomes by comparing baseline vs. harnessed runs against explicit assertions. Use when you need evidence that extra context is worth the tokens.
+- [`edd`](skills/edd/SKILL.md) — Eval-Driven Development. TDD for context, not code. Write behavioral assertions about agent behavior, engineer harness/prompts until assertions pass, catch regressions before shipping. Use when iterating on any context artifact that runs repeatedly.
+- [`context-eval`](skills/context-eval/SKILL.md) — Measures whether a context engineering harness actually improves agent outcomes by comparing baseline vs. harnessed runs against explicit assertions. The measurement engine that EDD uses under the hood.
 
 ---
 
@@ -75,6 +76,8 @@ Skills are designed to be composed. Common sequences:
 
 **Checking whether a context harness is worth the tokens** → Context Eval
 
+**Iterating on a context harness** → EDD (uses Context Eval as measurement engine)
+
 ---
 
 ## Structure
@@ -86,6 +89,7 @@ skills/
 ├── casual-inference/
 ├── cognitive-bias-detection/
 ├── context-eval/
+├── edd/
 ├── cynefin-framework/
 ├── decision-intelligence/
 ├── decision-synthesis/
