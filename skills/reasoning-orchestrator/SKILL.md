@@ -30,11 +30,11 @@ Classify the situation across these dimensions and write the classification out 
 **Primary obstacle**:
 - Don't understand the system → diagnostic track
 - Understand it, stuck on solutions → generative track
-- Need novel ideas or creative output → creative track
 - Have solutions, need to choose → convergence track
 - Something went wrong → retrospective track
 - About to commit to something → adversarial track
 - Don't know what we don't know → epistemic track
+- Incentives are misaligned / need to design rules → strategic track
 
 **Domain complexity** (if unclear, assign `unknown` and include `cynefin-framework` in Step 2):
 - Clear / Complicated / Complex / Chaotic / Unknown
@@ -48,8 +48,6 @@ Obstacle: [label] → [track]
 Domain: [label]
 ```
 
-**Distinguishing generative from creative track**: The generative track applies when you have a *defined problem* and all solutions feel the same — it escapes dominant patterns via lateral-thinking, analogical-thinking, and first-principles-thinking. The creative track applies when the *deliverable is an idea itself* — names, concepts, angles, metaphors, narratives, marketing hooks, product ideas, extensions — and you need novelty through frame collision, not pattern escape. If the user says "brainstorm", "give me ideas for", "what's a fresh angle", "surprise me", or the desired output is creative rather than analytical → creative track. When both tracks apply (stuck on a problem AND need novel framing), run both: P2 ∥ bisociative-creativity.
-
 ---
 
 ### STEP 2 — Build the Execution Plan (do this yourself, no skill file needed)
@@ -62,16 +60,14 @@ Using the triage output and the routing table below, produce a numbered executio
 |----------|---------------|
 | Don't know what we're dealing with | PARALLEL: epistemic-mapping ∥ cynefin-framework ∥ cognitive-bias-detection → re-triage |
 | Don't understand the system / why it's failing | PARALLEL: systems-thinking ∥ theory-of-constraints ∥ causal-inference → SEQUENTIAL: five-whys-root-cause → decision-synthesis |
+| Don't understand the system / strategic agents involved | PARALLEL: systems-thinking ∥ game-theoretic-analysis ∥ causal-inference → SEQUENTIAL: five-whys-root-cause → decision-synthesis |
 | Plan / design needs validation | PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: cognitive-bias-detection → decision-synthesis |
 | Stuck, all solutions feel the same | SEQUENTIAL: epistemic-mapping → PARALLEL: lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking → SEQUENTIAL: inversion-premortem → decision-synthesis |
-| Need novel ideas or creative output | SEQUENTIAL: bisociative-creativity → SEQUENTIAL: inversion-premortem (stress-test top sparks) |
-| Stuck AND need creative framing | SEQUENTIAL: epistemic-mapping → PARALLEL: lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking ∥ bisociative-creativity → SEQUENTIAL: inversion-premortem → decision-synthesis |
-| Need to decide between options (comparing A vs B vs C) | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → decision-synthesis |
-| Single decision, estimable odds, bias likely active (sunk cost / survivorship / gut vs math) | SEQUENTIAL: decision-intelligence → decision-synthesis |
-| Financial bet or investment sizing | SEQUENTIAL: decision-intelligence (Kelly Criterion — only skill covering position sizing) |
+| Need to decide between options | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → decision-synthesis |
 | Something went wrong / post-mortem | SEQUENTIAL: retrospective-counterfactual → PARALLEL: five-whys-root-cause ∥ causal-inference → SEQUENTIAL: cognitive-bias-detection |
-| Long-term strategic commitment | PARALLEL: epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework → PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → SEQUENTIAL: decision-intelligence → PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: stakeholder-power-mapping → decision-synthesis |
-| Blocked / people won't adopt | PARALLEL: stakeholder-power-mapping ∥ second-order-thinking ∥ causal-inference → decision-synthesis |
+| Long-term strategic commitment | PARALLEL: epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework → PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → PARALLEL: stakeholder-power-mapping ∥ game-theoretic-analysis → decision-synthesis |
+| Blocked / people won't adopt | PARALLEL: stakeholder-power-mapping ∥ game-theoretic-analysis ∥ second-order-thinking ∥ causal-inference → decision-synthesis |
+| Incentives misaligned / need to design rules | SEQUENTIAL: game-theoretic-analysis → PARALLEL: second-order-thinking ∥ red-teaming → SEQUENTIAL: stakeholder-power-mapping → decision-synthesis |
 
 Write the plan in this format:
 ```
@@ -152,38 +148,64 @@ Recommended action: [what to do now]
 
 ## Parallelization Reference
 
-Canonical parallel clusters. Skills within a cluster apply independent lenses and never depend on each other's output.
+These five clusters are the canonical parallel groups. Skills within a cluster apply independent lenses and never depend on each other's output.
 
-| Pattern | Skills |
-|---------|--------|
-| P1 — Adversarial | inversion-premortem ∥ red-teaming ∥ second-order-thinking |
-| P2 — Generative | lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking |
-| P2+ — Generative + Creative | lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking ∥ bisociative-creativity |
-| P3 — Diagnostic | systems-thinking ∥ theory-of-constraints ∥ causal-inference |
-| P4 — Uncertainty | scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation |
-| P5 — Meta-cognitive | epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework |
-
-**Note on bisociative-creativity**: When the creative track is the *primary* track (deliverable is an idea), run bisociative-creativity as a standalone sequential step. Use P2+ only when generative and creative tracks overlap. Follow with inversion-premortem to stress-test top sparks.
+| Pattern | Skills | Use when |
+|---------|--------|---------|
+| P1 — Adversarial | inversion-premortem ∥ red-teaming ∥ second-order-thinking | Validating a plan before commitment |
+| P2 — Generative | lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking | Stuck, need new options |
+| P3 — Diagnostic | systems-thinking ∥ theory-of-constraints ∥ causal-inference | System is failing, need to understand why |
+| P4 — Uncertainty | scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation | Decision needs quantification |
+| P5 — Meta-cognitive | epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework | Clean the reasoning environment first |
+| P6 — Strategic | game-theoretic-analysis ∥ stakeholder-power-mapping ∥ second-order-thinking | Multiple agents with competing incentives |
 
 ---
 
 ## Post-Step Routing Reference
 
-After completing any step, use this table to adjust the plan if findings warrant it. Only non-obvious redirects are listed — obvious escalations (e.g., bottleneck → theory-of-constraints) should be applied naturally.
+After completing any step, use this table to adjust the plan if findings warrant it:
 
 | Completed skill | Finding | Adjust plan to include |
 |----------------|---------|----------------------|
 | epistemic-mapping | Dangerous assumptions found | first-principles-thinking (sequential, next) |
 | cynefin-framework | Domain = Complex | lateral-thinking ∥ scenario-planning (parallel) instead of structured analysis |
 | cynefin-framework | Domain = Chaotic | Act immediately; retrospective-counterfactual after stabilization |
+| stakeholder-power-mapping | Strategic agents with conflicting incentives | game-theoretic-analysis (sequential) |
+| game-theoretic-analysis | Nash Equilibrium ≠ Pareto Optimum | Mechanism design needed — decision-synthesis with design constraints |
+| game-theoretic-analysis | Information asymmetry identified | red-teaming on exploitability (sequential) |
+| game-theoretic-analysis | Repeated game dynamics | second-order-thinking on reputation effects (sequential) |
+| systems-thinking | Bottleneck identified | theory-of-constraints (sequential) |
+| five-whys-root-cause | Root cause is causal claim | causal-inference (sequential) |
+| five-whys-root-cause | Multiple root causes | decision-synthesis (sequential, to prioritize) |
 | adversarial panel (P1) | High-severity risks | cognitive-bias-detection on the risk analysis (sequential) |
 | generative panel (P2) | All options weak | epistemic-mapping — frame may be wrong (sequential, restart) |
-| generative panel (P2) | Options incremental, not novel enough | bisociative-creativity (sequential) — collide with distant frames |
-| bisociative-creativity | Strong sparks produced | inversion-premortem to stress-test top 2–3 sparks (sequential) |
-| bisociative-creativity | Only kernels, no live sparks | Re-run with more distant frames, or lateral-thinking (sequential) |
 | uncertainty panel (P4) | High uncertainty persists | inversion-premortem on worst-case scenario (sequential) |
 | decision-synthesis | Key assumption too uncertain | epistemic-mapping → validate before committing |
+| retrospective-counterfactual | Systemic cause found | systems-thinking ∥ five-whys-root-cause (parallel) |
 
 ---
 
-**Skill file convention**: All skills are at `skills/[skill-name]/SKILL.md`.
+## Skill Registry
+
+| Skill | File path | Parallelizes with |
+|-------|-----------|------------------|
+| epistemic-mapping | skills/epistemic-mapping/SKILL.md | cynefin-framework, cognitive-bias-detection |
+| cynefin-framework | skills/cynefin-framework/SKILL.md | epistemic-mapping, cognitive-bias-detection |
+| systems-thinking | skills/systems-thinking/SKILL.md | theory-of-constraints, causal-inference |
+| theory-of-constraints | skills/theory-of-constraints/SKILL.md | systems-thinking, causal-inference |
+| five-whys-root-cause | skills/five-whys-root-cause/SKILL.md | causal-inference |
+| causal-inference | skills/causal-inference/SKILL.md | systems-thinking, five-whys-root-cause |
+| cognitive-bias-detection | skills/cognitive-bias-detection/SKILL.md | epistemic-mapping, cynefin-framework |
+| inversion-premortem | skills/inversion-premortem/SKILL.md | red-teaming, second-order-thinking |
+| red-teaming | skills/red-teaming/SKILL.md | inversion-premortem, second-order-thinking |
+| second-order-thinking | skills/second-order-thinking/SKILL.md | inversion-premortem, red-teaming |
+| probabilistic-thinking | skills/probabilistic-thinking/SKILL.md | scenario-planning, fermi-estimation |
+| fermi-estimation | skills/fermi-estimation/SKILL.md | probabilistic-thinking, scenario-planning |
+| scenario-planning | skills/scenario-planning/SKILL.md | probabilistic-thinking, fermi-estimation |
+| stakeholder-power-mapping | skills/stakeholder-power-mapping/SKILL.md | second-order-thinking, causal-inference, game-theoretic-analysis |
+| game-theoretic-analysis | skills/game-theoretic-analysis/SKILL.md | stakeholder-power-mapping, second-order-thinking, causal-inference |
+| lateral-thinking | skills/lateral-thinking/SKILL.md | analogical-thinking, first-principles-thinking |
+| analogical-thinking | skills/analogical-thinking/SKILL.md | lateral-thinking, first-principles-thinking |
+| first-principles-thinking | skills/first-principles-thinking/SKILL.md | lateral-thinking, analogical-thinking |
+| decision-synthesis | skills/decision-synthesis/SKILL.md | runs after all others |
+| retrospective-counterfactual | skills/retrospective-counterfactual/SKILL.md | five-whys-root-cause, causal-inference |
