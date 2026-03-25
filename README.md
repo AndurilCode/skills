@@ -8,7 +8,7 @@ Each skill lives in its own folder and is self-contained: a `SKILL.md` with a tr
 
 ## Reasoning Skills
 
-Thirty-two frameworks across seven thinking categories, plus development methodologies for context engineering.
+Thirty-three frameworks across seven thinking categories, plus development methodologies for context engineering.
 
 ### Understand the System
 
@@ -56,8 +56,10 @@ Thirty-two frameworks across seven thinking categories, plus development methodo
 - [`context-gap-analyzer`](skills/context-gap-analyzer/SKILL.md) — Identify the implicit context missing from a codebase that would most improve agent performance. The delta between what code explicitly says and what a competent team member knows.
 - [`context-eval`](skills/context-eval/SKILL.md) — Measures whether a context engineering harness actually improves agent outcomes by comparing baseline vs. harnessed runs against explicit assertions. The measurement engine that EDD uses under the hood.
 - [`edd`](skills/edd/SKILL.md) — Eval-Driven Development. TDD for context, not code. Write behavioral assertions about agent behavior, engineer harness/prompts until assertions pass, catch regressions before shipping.
+- [`deep-document-processor`](skills/deep-document-processor/SKILL.md) — Multi-pass reading protocol to extract token-efficient, decision-relevant context from large documents. Optimized for agent consumption, not human summaries.
 - [`llms-txt-generator`](skills/llms-txt-generator/SKILL.md) — Generate token-budgeted, section-per-concept Markdown optimized for LLM and RAG consumption. Turns sprawling docs into precise, structured context.
 - [`business-logic-extractor`](skills/business-logic-extractor/SKILL.md) — Extract and document business logic, domain models, and product rules from a codebase into a structured llms.txt-style reference.
+- [`deep-document-processor`](skills/deep-document-processor/SKILL.md) — Apply disciplined multi-pass reading to extract token-efficient, decision-relevant context from large documents. Four-pass protocol (survey, extract, cross-ref, assemble) optimized for agent consumption.
 - [`test-challenger`](skills/test-challenger/SKILL.md) — Challenge AI-generated (or any) unit tests to find false positives — tests that pass against wrong behavior.
 - [`code-review-amplifier`](skills/code-review-amplifier/SKILL.md) — Amplifies code reviews by assembling context, pre-scanning surface issues, and routing knowledge-transfer opportunities to human reviewers.
 
@@ -108,6 +110,7 @@ skills/
 ├── cynefin-framework/
 ├── decision-intelligence/
 ├── decision-synthesis/
+├── deep-document-processor/
 ├── edd/
 ├── epistemic-mapping/
 ├── fermi-estimation/
