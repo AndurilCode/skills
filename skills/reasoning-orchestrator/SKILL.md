@@ -62,12 +62,28 @@ Using the triage output and the routing table below, produce a numbered executio
 | Don't understand the system / why it's failing | PARALLEL: systems-thinking ∥ theory-of-constraints ∥ causal-inference → SEQUENTIAL: five-whys-root-cause → decision-synthesis |
 | Don't understand the system / strategic agents involved | PARALLEL: systems-thinking ∥ game-theoretic-analysis ∥ causal-inference → SEQUENTIAL: five-whys-root-cause → decision-synthesis |
 | Plan / design needs validation | PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: cognitive-bias-detection → decision-synthesis |
+| Plan / design needs validation + ethical review | PARALLEL: inversion-premortem ∥ red-teaming ∥ ethical-reasoning → SEQUENTIAL: cognitive-bias-detection → decision-synthesis |
 | Stuck, all solutions feel the same | SEQUENTIAL: epistemic-mapping → PARALLEL: lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking → SEQUENTIAL: inversion-premortem → decision-synthesis |
 | Need to decide between options | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → decision-synthesis |
+| Need to decide between options + financial | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → SEQUENTIAL: financial-modeling → decision-synthesis |
 | Something went wrong / post-mortem | SEQUENTIAL: retrospective-counterfactual → PARALLEL: five-whys-root-cause ∥ causal-inference → SEQUENTIAL: cognitive-bias-detection |
+| Software bug / unexpected behavior | SEQUENTIAL: debugging-methodology → PARALLEL: five-whys-root-cause ∥ causal-inference → decision-synthesis |
 | Long-term strategic commitment | PARALLEL: epistemic-mapping ∥ cognitive-bias-detection ∥ cynefin-framework → PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → PARALLEL: stakeholder-power-mapping ∥ game-theoretic-analysis → decision-synthesis |
 | Blocked / people won't adopt | PARALLEL: stakeholder-power-mapping ∥ game-theoretic-analysis ∥ second-order-thinking ∥ causal-inference → decision-synthesis |
 | Incentives misaligned / need to design rules | SEQUENTIAL: game-theoretic-analysis → PARALLEL: second-order-thinking ∥ red-teaming → SEQUENTIAL: stakeholder-power-mapping → decision-synthesis |
+| Need to negotiate or reach agreement | SEQUENTIAL: game-theoretic-analysis → SEQUENTIAL: negotiation-strategy → difficult-conversations (if escalation needed) |
+| Need to communicate or persuade | SEQUENTIAL: argument-craft → execution-planning (if action follows) |
+| Need to build a business case | SEQUENTIAL: fermi-estimation → SEQUENTIAL: financial-modeling → SEQUENTIAL: scenario-planning → SEQUENTIAL: argument-craft |
+| Need to validate a hypothesis | SEQUENTIAL: epistemic-mapping → SEQUENTIAL: experimental-design → [run experiment] → SEQUENTIAL: causal-inference → SEQUENTIAL: evidence-synthesis → decision-synthesis |
+| Need to learn a new domain | SEQUENTIAL: epistemic-mapping → SEQUENTIAL: learning-strategy → [learning] → SEQUENTIAL: evidence-synthesis → decision-synthesis |
+| Decision needs to be executed | SEQUENTIAL: decision-synthesis → SEQUENTIAL: argument-craft → SEQUENTIAL: execution-planning |
+| Architecture decision needed | SEQUENTIAL: systems-thinking → SEQUENTIAL: architecture-evaluation → PARALLEL: inversion-premortem ∥ red-teaming → decision-synthesis → execution-planning |
+| Process is slow / broken / needs redesign | PARALLEL: systems-thinking ∥ theory-of-constraints → SEQUENTIAL: process-design → execution-planning |
+| Need to run a meeting or workshop | SEQUENTIAL: facilitation-design |
+| Need to tell a compelling story | SEQUENTIAL: argument-craft → SEQUENTIAL: narrative-construction |
+| Need to assess fairness or equity | SEQUENTIAL: ethical-reasoning → SEQUENTIAL: fairness-auditing → decision-synthesis |
+| Synthesize evidence from multiple sources | SEQUENTIAL: evidence-synthesis → decision-synthesis |
+| Need to create or improve agent instructions | SEQUENTIAL: context-gap-analyzer → SEQUENTIAL: agent-instruction-forge → SEQUENTIAL: edd (to validate) |
 
 Write the plan in this format:
 ```
@@ -181,6 +197,23 @@ After completing any step, use this table to adjust the plan if findings warrant
 | generative panel (P2) | All options weak | epistemic-mapping — frame may be wrong (sequential, restart) |
 | uncertainty panel (P4) | High uncertainty persists | inversion-premortem on worst-case scenario (sequential) |
 | decision-synthesis | Key assumption too uncertain | epistemic-mapping → validate before committing |
+| decision-synthesis | Decision made, needs communication | argument-craft (sequential) |
+| decision-synthesis | Decision made, needs execution | execution-planning (sequential) |
+| decision-synthesis | Ethical criteria needed | ethical-reasoning (sequential, before re-running decision-synthesis) |
+| decision-synthesis | Financial criteria needed | financial-modeling (sequential, before re-running decision-synthesis) |
+| argument-craft | Audience won't be convinced by logic alone | narrative-construction (sequential) |
+| argument-craft | Decision committed, ready to execute | execution-planning (sequential) |
+| execution-planning | Resources/timeline need approval | argument-craft (sequential, resource ask) |
+| negotiation-strategy | Emotional stakes or power asymmetry too high | difficult-conversations (sequential) |
+| ethical-reasoning | Systemic/algorithmic fairness concerns | fairness-auditing (sequential) |
+| architecture-evaluation | Architecture decided | execution-planning (sequential) |
+| debugging-methodology | Root cause identified as causal claim | causal-inference (sequential) |
+| debugging-methodology | Root cause is structural | five-whys-root-cause ∥ systems-thinking (parallel) |
+| experimental-design | Experiment complete, results ready | causal-inference (sequential) |
+| evidence-synthesis | Evidence synthesized, decision needed | decision-synthesis (sequential) |
+| learning-strategy | Learning complete, sources to integrate | evidence-synthesis (sequential) |
+| financial-modeling | Scenarios need stress-testing | scenario-planning (sequential) |
+| process-design | Process designed, needs implementation | execution-planning (sequential) |
 | retrospective-counterfactual | Systemic cause found | systems-thinking ∥ five-whys-root-cause (parallel) |
 
 ---
@@ -208,4 +241,21 @@ After completing any step, use this table to adjust the plan if findings warrant
 | analogical-thinking | skills/analogical-thinking/SKILL.md | lateral-thinking, first-principles-thinking |
 | first-principles-thinking | skills/first-principles-thinking/SKILL.md | lateral-thinking, analogical-thinking |
 | decision-synthesis | skills/decision-synthesis/SKILL.md | runs after all others |
+| decision-intelligence | skills/decision-intelligence/SKILL.md | standalone (single-option evaluation) |
 | retrospective-counterfactual | skills/retrospective-counterfactual/SKILL.md | five-whys-root-cause, causal-inference |
+| execution-planning | skills/execution-planning/SKILL.md | runs after decision-synthesis or architecture-evaluation |
+| argument-craft | skills/argument-craft/SKILL.md | runs after decision-synthesis or scenario-planning |
+| ethical-reasoning | skills/ethical-reasoning/SKILL.md | inversion-premortem, red-teaming (parallel validation) |
+| experimental-design | skills/experimental-design/SKILL.md | runs after epistemic-mapping |
+| negotiation-strategy | skills/negotiation-strategy/SKILL.md | runs after game-theoretic-analysis |
+| difficult-conversations | skills/difficult-conversations/SKILL.md | runs after negotiation-strategy or stakeholder-power-mapping |
+| financial-modeling | skills/financial-modeling/SKILL.md | runs after fermi-estimation |
+| architecture-evaluation | skills/architecture-evaluation/SKILL.md | runs after systems-thinking |
+| evidence-synthesis | skills/evidence-synthesis/SKILL.md | runs after causal-inference or learning-strategy |
+| learning-strategy | skills/learning-strategy/SKILL.md | runs after epistemic-mapping |
+| process-design | skills/process-design/SKILL.md | runs after systems-thinking, theory-of-constraints |
+| debugging-methodology | skills/debugging-methodology/SKILL.md | standalone entry point for software bugs |
+| facilitation-design | skills/facilitation-design/SKILL.md | standalone (produces session plan) |
+| narrative-construction | skills/narrative-construction/SKILL.md | runs after argument-craft |
+| fairness-auditing | skills/fairness-auditing/SKILL.md | runs after ethical-reasoning |
+| agent-instruction-forge | skills/agent-instruction-forge/SKILL.md | runs after context-gap-analyzer |
