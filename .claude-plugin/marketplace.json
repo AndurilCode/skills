@@ -7,29 +7,29 @@
   },
   "plugins": [
     {
-      "name": "reasoning",
-      "source": "./plugins/reasoning",
+      "name": "craftwork-reasoning",
+      "source": "./plugins/craftwork-reasoning",
       "description": "22 reasoning frameworks for analysis, decisions, and problem-solving",
       "version": "1.0.0",
       "category": "reasoning"
     },
     {
-      "name": "context-engineering",
-      "source": "./plugins/context-engineering",
+      "name": "craftwork-context-engineering",
+      "source": "./plugins/craftwork-context-engineering",
       "description": "11 skills for building, evaluating, and debugging agent context",
       "version": "1.0.0",
       "category": "development"
     },
     {
-      "name": "professional",
-      "source": "./plugins/professional",
+      "name": "craftwork-professional",
+      "source": "./plugins/craftwork-professional",
       "description": "17 skills for architecture, code quality, process design, and communication",
       "version": "1.0.0",
       "category": "professional"
     },
     {
-      "name": "all",
-      "source": "./plugins/all",
+      "name": "craftwork-all",
+      "source": "./plugins/craftwork-all",
       "description": "All 50 skills in one plugin",
       "version": "1.0.0",
       "category": "bundle"
