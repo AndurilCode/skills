@@ -1,0 +1,37 @@
+{
+  "name": "craftwork",
+  "metadata": {
+    "description": "Reasoning, context engineering, and professional skills for Claude Code",
+    "pluginRoot": "../plugins"
+  },
+  "plugins": [
+    {
+      "name": "reasoning",
+      "source": "./reasoning",
+      "description": "22 reasoning frameworks for analysis, decisions, and problem-solving",
+      "version": "1.0.0",
+      "category": "reasoning"
+    },
+    {
+      "name": "context-engineering",
+      "source": "./context-engineering",
+      "description": "11 skills for building, evaluating, and debugging agent context",
+      "version": "1.0.0",
+      "category": "development"
+    },
+    {
+      "name": "professional",
+      "source": "./professional",
+      "description": "17 skills for architecture, code quality, process design, and communication",
+      "version": "1.0.0",
+      "category": "professional"
+    },
+    {
+      "name": "all",
+      "source": "./all",
+      "description": "All 50 skills in one plugin",
+      "version": "1.0.0",
+      "category": "bundle"
+    }
+  ]
+}

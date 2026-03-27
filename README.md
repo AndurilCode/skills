@@ -1,203 +1,143 @@
-# skills
+# Craftwork
 
-Personal collection of Claude skills — structured reasoning frameworks and development methodologies that teach the agent *when* and *how* to apply specific thinking modes when evaluating, diagnosing, deciding, or engineering context.
+50 agent skills for reasoning, context engineering, and professional work. Works with Claude Code, Cursor, Codex, and [40+ agents](https://github.com/vercel-labs/skills#available-agents).
 
-Each skill lives in its own folder and is self-contained: a `SKILL.md` with a trigger description (so Claude knows when to apply it) and a structured methodology (so it knows how).
+## Install
+
+```bash
+# All skills (any agent)
+npx skills add gpavanello/skills
+
+# List available skills first
+npx skills add gpavanello/skills --list
+
+# Specific skills only
+npx skills add gpavanello/skills --skill reasoning-orchestrator --skill agent-instruction-forge
+
+# Specific agent only
+npx skills add gpavanello/skills -a claude-code
+```
+
+### Claude Code Plugin (selective install by category)
+
+```bash
+# Add the marketplace
+/plugin marketplace add https://github.com/gpavanello/skills
+
+# Install by category
+/plugin install reasoning@craftwork              # 22 thinking frameworks
+/plugin install context-engineering@craftwork     # 11 context/agent tools
+/plugin install professional@craftwork            # 17 architecture/communication skills
+/plugin install all@craftwork              # everything
+```
 
 ---
 
-## Reasoning Skills
+## Plugins
 
-Forty-nine frameworks across ten thinking categories, plus development methodologies for context engineering.
+### reasoning (22 skills)
 
-### Understand the System
+Thinking frameworks for analysis, decisions, and problem-solving.
 
-- [`systems-thinking`](skills/system-thinking/SKILL.md) — Maps stocks, flows, feedback loops, and archetypes to find where a system structurally works and where it breaks down.
-- [`first-principles-thinking`](skills/first-principles-thinking/SKILL.md) — Strips away conventions down to fundamental truths and rebuilds from scratch. Use when the frame itself might be wrong.
-- [`cynefin-framework`](skills/cynefin-framework/SKILL.md) — Classifies the problem domain (Clear / Complicated / Complex / Chaotic) before choosing an approach. Prevents applying the wrong solution type.
-- [`epistemic-mapping`](skills/epistemic-mapping/SKILL.md) — Maps what you know, believe, and don't know before reasoning. Surfaces unknown unknowns, dangerous assumptions, and what would change your mind.
+| Category | Skills |
+|----------|--------|
+| **Understand the System** | [systems-thinking](plugins/reasoning/skills/system-thinking/SKILL.md), [first-principles-thinking](plugins/reasoning/skills/first-principles-thinking/SKILL.md), [cynefin-framework](plugins/reasoning/skills/cynefin-framework/SKILL.md), [epistemic-mapping](plugins/reasoning/skills/epistemic-mapping/SKILL.md) |
+| **Find What's Broken** | [theory-of-constraints](plugins/reasoning/skills/theory-of-constraints/SKILL.md), [five-whys-root-cause](plugins/reasoning/skills/five-whys-root-cause/SKILL.md), [causal-inference](plugins/reasoning/skills/casual-inference/SKILL.md), [cognitive-bias-detection](plugins/reasoning/skills/cognitive-bias-detection/SKILL.md) |
+| **Stress-Test** | [inversion-premortem](plugins/reasoning/skills/inversion-premortem/SKILL.md), [red-teaming](plugins/reasoning/skills/red-teaming/SKILL.md), [second-order-thinking](plugins/reasoning/skills/second-order-thinking/SKILL.md) |
+| **Navigate Uncertainty** | [probabilistic-thinking](plugins/reasoning/skills/probabilistic-thinking/SKILL.md), [fermi-estimation](plugins/reasoning/skills/fermi-estimation/SKILL.md), [scenario-planning](plugins/reasoning/skills/scenario-planning/SKILL.md), [game-theoretic-analysis](plugins/reasoning/skills/game-theoretic-analysis/SKILL.md) |
+| **Generate Options** | [lateral-thinking](plugins/reasoning/skills/lateral-thinking/SKILL.md), [analogical-thinking](plugins/reasoning/skills/analogical-thinking/SKILL.md), [bisociative-creativity](plugins/reasoning/skills/bisociative-creativity/SKILL.md) |
+| **Decide** | [decision-synthesis](plugins/reasoning/skills/decision-synthesis/SKILL.md), [decision-intelligence](plugins/reasoning/skills/decision-intelligence/SKILL.md), [retrospective-counterfactual](plugins/reasoning/skills/retrospective-counterfactual/SKILL.md), [evidence-synthesis](plugins/reasoning/skills/evidence-synthesis/SKILL.md) |
+| **Orchestrate** | [reasoning-orchestrator](plugins/reasoning/skills/reasoning-orchestrator/SKILL.md) — entry point, triages and routes to the right framework |
 
-### Find What's Broken
+### context-engineering (11 skills)
 
-- [`theory-of-constraints`](skills/theory-of-constraints/SKILL.md) — Identifies the single bottleneck limiting throughput. Optimizing anything else is waste.
-- [`five-whys-root-cause`](skills/five-whys-root-cause/SKILL.md) — Drills through symptoms to structural root causes. Stops fixes that don't hold.
-- [`causal-inference`](skills/casual-inference/SKILL.md) — Distinguishes causation from correlation when interpreting metrics, A/B tests, and system behavior. Surfaces confounders and counterfactuals.
-- [`cognitive-bias-detection`](skills/cognitive-bias-detection/SKILL.md) — Audits the reasoning itself for systematic distortions: confirmation bias, sunk cost, anchoring, groupthink, and more.
+Build, evaluate, and debug agent context — instructions, harnesses, evals, and documentation.
 
-### Stress-Test and Attack
+| Skill | Purpose |
+|-------|---------|
+| [agent-instruction-forge](plugins/context-engineering/skills/agent-instruction-forge/SKILL.md) | Create instruction rules for coding agents (CLAUDE.md, AGENTS.md, .cursorrules) |
+| [rule-quality-evaluator](plugins/context-engineering/skills/rule-quality-evaluator/SKILL.md) | Score instruction rules on Seven Properties, detect redundancies, test behaviorally |
+| [context-cartography](plugins/context-engineering/skills/context-cartography/SKILL.md) | Design what goes into an agent's context window |
+| [context-gap-analyzer](plugins/context-engineering/skills/context-gap-analyzer/SKILL.md) | Find implicit context missing from a codebase |
+| [context-debugging](plugins/context-engineering/skills/context-debugging/SKILL.md) | Diagnose agent failures that originate in the context layer |
+| [context-eval](plugins/context-engineering/skills/context-eval/SKILL.md) | Measure whether a context harness actually improves outcomes |
+| [edd](plugins/context-engineering/skills/edd/SKILL.md) | Eval-Driven Development — TDD for context, not code |
+| [llms-txt-generator](plugins/context-engineering/skills/llms-txt-generator/SKILL.md) | Generate token-efficient context documents for LLM consumption |
+| [deep-document-processor](plugins/context-engineering/skills/deep-document-processor/SKILL.md) | Multi-pass reading to extract decision-relevant context from large documents |
+| [business-logic-extractor](plugins/context-engineering/skills/business-logic-extractor/SKILL.md) | Extract domain rules and business logic from code into structured references |
+| [test-challenger](plugins/context-engineering/skills/test-challenger/SKILL.md) | Find false positives in AI-generated tests |
 
-- [`inversion-premortem`](skills/inversion-premortem/SKILL.md) — Imagines the future failure and works backwards. Surfaces hidden assumptions before commitment.
-- [`red-teaming`](skills/red-teaming/SKILL.md) — Attacks the system adversarially across technical, incentive, process, and systemic dimensions.
-- [`second-order-thinking`](skills/second-order-thinking/SKILL.md) — Traces consequences of consequences. Catches unintended side effects and equilibrium shifts.
+### professional (17 skills)
 
-### Navigate Uncertainty and People
+Architecture, code quality, process design, communication, and leadership.
 
-- [`probabilistic-thinking`](skills/probabilistic-thinking/SKILL.md) — Applies base rates, Bayesian updating, and expected value to reason under uncertainty.
-- [`fermi-estimation`](skills/fermi-estimation/SKILL.md) — Estimates unknown quantities by decomposition from first principles. Useful when data is unavailable and a decision can't wait.
-- [`scenario-planning`](skills/scenario-planning/SKILL.md) — Maps plausible futures across key uncertainties and stress-tests strategy against each.
-- [`stakeholder-power-mapping`](skills/stakeholder-power-mapping/SKILL.md) — Maps who has power and interest, surfaces informal influence networks, designs engagement strategies.
-- [`game-theoretic-analysis`](skills/game-theoretic-analysis/SKILL.md) — Analyzes strategic interaction between agents, actors, or systems where each party's best move depends on what others do. Catches incentive misalignments that systems-thinking alone misses.
-### Generate New Options
-
-- [`lateral-thinking`](skills/lateral-thinking/SKILL.md) — Deliberately escapes dominant patterns to generate non-obvious alternatives. Use when analytical thinking has hit a ceiling.
-- [`analogical-thinking`](skills/analogical-thinking/SKILL.md) — Finds structural analogues in other domains and transfers solution patterns. Don't reinvent what's been solved elsewhere under a different name.
-- [`bisociative-creativity`](skills/bisociative-creativity/SKILL.md) — Generates genuinely novel ideas by colliding distant frames of reference. Use when the deliverable is a creative concept, name, angle, or metaphor rather than an analysis.
-
-### Decide, Communicate, and Execute
-
-- [`decision-synthesis`](skills/decision-synthesis/SKILL.md) — Bridges analysis to action using weighted criteria and structured trade-off evaluation. The convergence layer after running other frameworks.
-- [`decision-intelligence`](skills/decision-intelligence/SKILL.md) — Applies six probabilistic models (Expected Value, Base Rate, Sunk Cost, Bayesian Thinking, Survivorship Bias, Kelly Criterion) mandatorily and in sequence to any decision with quantifiable stakes.
-- [`retrospective-counterfactual`](skills/retrospective-counterfactual/SKILL.md) — Reconstructs what actually caused a past outcome and what would have happened differently. Post-mortems, incident reviews, and decision quality assessment.
-- [`argument-craft`](skills/argument-craft/SKILL.md) — Takes an analysis or recommendation and structures it into a persuasive argument tailored to a specific audience. Pyramid principle, objection pre-emption, framing selection.
-- [`execution-planning`](skills/execution-planning/SKILL.md) — Decomposes a decision into an executable plan with WBS, dependency mapping, critical path, PERT estimation, RACI ownership, and risk buffers.
-- [`narrative-construction`](skills/narrative-construction/SKILL.md) — Constructs narrative structure for content using story mechanics — arcs, hooks, tension management, and concrete detail anchoring.
-
-### Negotiate and Navigate People
-
-- [`negotiation-strategy`](skills/negotiation-strategy/SKILL.md) — Prepares for negotiations by mapping interests, BATNAs, ZOPA, value creation opportunities, and concession plans. Extends game-theoretic analysis into practical tactics.
-- [`difficult-conversations`](skills/difficult-conversations/SKILL.md) — Prepares for conversations involving conflict, power dynamics, or emotional stakes using the Three Conversations model and Nonviolent Communication.
-- [`facilitation-design`](skills/facilitation-design/SKILL.md) — Designs meeting and workshop structure with diverge-cluster-converge activities, decision protocols, and psychological safety engineering.
-
-### Reason About Ethics and Fairness
-
-- [`ethical-reasoning`](skills/ethical-reasoning/SKILL.md) — Applies consequentialist, deontological, and virtue ethics frameworks to surface obligations, harms, rights, and value trade-offs that analytical reasoning misses.
-- [`fairness-auditing`](skills/fairness-auditing/SKILL.md) — Audits systems, algorithms, or policies for equitable outcomes across groups using five fairness definitions, data audits, and intersectionality checks.
-
-### Validate, Synthesize, and Learn
-
-- [`experimental-design`](skills/experimental-design/SKILL.md) — Designs rigorous experiments with hypothesis formulation, variable identification, sample sizing, pre-registration, and confound mitigation.
-- [`evidence-synthesis`](skills/evidence-synthesis/SKILL.md) — Synthesizes evidence from multiple sources with quality grading (GRADE framework), pattern identification, conflict resolution, and confidence-weighted conclusions.
-- [`learning-strategy`](skills/learning-strategy/SKILL.md) — Takes a knowledge gap and produces an efficient learning plan with prerequisite mapping, mode selection, deliberate practice, and transfer testing.
-- [`financial-modeling`](skills/financial-modeling/SKILL.md) — Constructs structured financial reasoning with unit economics, cost-benefit analysis, NPV/IRR, scenario modeling, and sensitivity analysis.
-- [`architecture-evaluation`](skills/architecture-evaluation/SKILL.md) — Evaluates system architecture decisions by mapping quality attributes, trade-offs, and producing Architecture Decision Records (ADRs).
-- [`debugging-methodology`](skills/debugging-methodology/SKILL.md) — Applies systematic debugging: reproduce, observe, hypothesize, isolate (binary search), confirm root cause. Prevents fixing symptoms.
-- [`process-design`](skills/process-design/SKILL.md) — Designs or redesigns workflows using current state mapping, Lean waste identification, value stream analysis, and automation assessment.
-
-### Engineer and Evaluate Context
-
-- [`context-cartography`](skills/context-cartography/SKILL.md) — Design what goes into an agent's context window. Prioritize, size, structure, and cut context sources using concrete patterns for common agent task types. Produces a versionable context manifest.
-- [`context-debugging`](skills/context-debugging/SKILL.md) — Diagnose agent failures that originate in the context layer. Systematic triage across 7 failure categories with quick fixes. Most failures that look like reasoning problems are actually context problems.
-- [`context-gap-analyzer`](skills/context-gap-analyzer/SKILL.md) — Identify the implicit context missing from a codebase that would most improve agent performance. The delta between what code explicitly says and what a competent team member knows.
-- [`context-eval`](skills/context-eval/SKILL.md) — Measures whether a context engineering harness actually improves agent outcomes by comparing baseline vs. harnessed runs against explicit assertions. The measurement engine that EDD uses under the hood.
-- [`edd`](skills/edd/SKILL.md) — Eval-Driven Development. TDD for context, not code. Write behavioral assertions about agent behavior, engineer harness/prompts until assertions pass, catch regressions before shipping.
-- [`deep-document-processor`](skills/deep-document-processor/SKILL.md) — Multi-pass reading protocol to extract token-efficient, decision-relevant context from large documents. Optimized for agent consumption, not human summaries.
-- [`llms-txt-generator`](skills/llms-txt-generator/SKILL.md) — Generate token-budgeted, section-per-concept Markdown optimized for LLM and RAG consumption. Turns sprawling docs into precise, structured context.
-- [`business-logic-extractor`](skills/business-logic-extractor/SKILL.md) — Extract and document business logic, domain models, and product rules from a codebase into a structured llms.txt-style reference.
-- [`deep-document-processor`](skills/deep-document-processor/SKILL.md) — Apply disciplined multi-pass reading to extract token-efficient, decision-relevant context from large documents. Four-pass protocol (survey, extract, cross-ref, assemble) optimized for agent consumption.
-- [`test-challenger`](skills/test-challenger/SKILL.md) — Challenge AI-generated (or any) unit tests to find false positives — tests that pass against wrong behavior.
-- [`code-review-amplifier`](skills/code-review-amplifier/SKILL.md) — Amplifies code reviews by assembling context, pre-scanning surface issues, and routing knowledge-transfer opportunities to human reviewers.
-- [`agent-instruction-forge`](skills/agent-instruction-forge/SKILL.md) — Guides humans through creating effective instruction rules for coding agents (Copilot, Claude Code, Cursor, Windsurf). Reads the codebase first, then runs structured knowledge extraction to surface implicit conventions, past failures, and architectural decisions that code alone can't tell an agent.
+| Skill | Purpose |
+|-------|---------|
+| [architecture-evaluation](plugins/professional/skills/architecture-evaluation/SKILL.md) | Evaluate system design decisions and produce ADRs |
+| [code-review-amplifier](plugins/professional/skills/code-review-amplifier/SKILL.md) | Amplify human code reviewers with structured pre-scanning |
+| [debugging-methodology](plugins/professional/skills/debugging-methodology/SKILL.md) | Systematic debugging: reproduce, observe, hypothesize, isolate |
+| [execution-planning](plugins/professional/skills/execution-planning/SKILL.md) | Decompose decisions into executable plans with dependencies |
+| [experimental-design](plugins/professional/skills/experimental-design/SKILL.md) | Design rigorous experiments to validate assumptions |
+| [process-design](plugins/professional/skills/process-design/SKILL.md) | Design or redesign workflows using Lean and value stream analysis |
+| [financial-modeling](plugins/professional/skills/financial-modeling/SKILL.md) | Unit economics, cost-benefit analysis, NPV/IRR, scenario modeling |
+| [argument-craft](plugins/professional/skills/argument-craft/SKILL.md) | Structure recommendations into persuasive arguments |
+| [narrative-construction](plugins/professional/skills/narrative-construction/SKILL.md) | Turn analysis into compelling stories |
+| [negotiation-strategy](plugins/professional/skills/negotiation-strategy/SKILL.md) | Prepare for negotiations with BATNA, ZOPA, and concession planning |
+| [difficult-conversations](plugins/professional/skills/difficult-conversations/SKILL.md) | Navigate conflict, feedback, and emotionally charged discussions |
+| [facilitation-design](plugins/professional/skills/facilitation-design/SKILL.md) | Design meetings and workshops that produce decisions |
+| [stakeholder-power-mapping](plugins/professional/skills/stakeholder-power-mapping/SKILL.md) | Map influence networks and design engagement strategies |
+| [ethical-reasoning](plugins/professional/skills/ethical-reasoning/SKILL.md) | Surface moral implications using multiple ethical frameworks |
+| [fairness-auditing](plugins/professional/skills/fairness-auditing/SKILL.md) | Audit systems for equitable outcomes across groups |
+| [learning-strategy](plugins/professional/skills/learning-strategy/SKILL.md) | Build structured plans for closing knowledge gaps |
+| [casual-inference](plugins/professional/skills/casual-inference/SKILL.md) | Distinguish causation from correlation in metrics and experiments |
 
 ---
 
 ## Chaining Skills
 
-Skills are designed to be composed. Common sequences:
+Skills compose. Common sequences:
 
-**Evaluating something that exists** → Cynefin → Systems Thinking → Theory of Constraints → 5 Whys → Causal Inference
+**Evaluating something** — Cynefin → Systems Thinking → Theory of Constraints → 5 Whys → Causal Inference
 
-**Validating a plan before committing** → Epistemic Mapping → First Principles → Inversion/Pre-mortem → Second-Order → Cognitive Bias Detection → Decision Synthesis
+**Validating a plan** — Epistemic Mapping → First Principles → Inversion/Pre-mortem → Second-Order → Decision Synthesis
 
-**Making a high-stakes decision** → Scenario Planning → Probabilistic Thinking → Fermi Estimation → Red Teaming → Stakeholder Mapping → Decision Synthesis
+**High-stakes decision** — Scenario Planning → Probabilistic Thinking → Fermi Estimation → Red Teaming → Decision Synthesis
 
-**Stuck with no good options** → Epistemic Mapping → Lateral Thinking → Analogical Thinking → First Principles
+**Stuck with no options** — Epistemic Mapping → Lateral Thinking → Analogical Thinking → First Principles
 
-**Generating creative options from scratch** → Bisociative Creativity → Inversion/Pre-mortem → Decision Synthesis
+**After something goes wrong** — Retrospective/Counterfactual → 5 Whys → Epistemic Mapping → Decision Synthesis
 
-**Diagnosing a recurring problem** → 5 Whys → Causal Inference → Systems Thinking → Cognitive Bias Detection
+**Full context engineering lifecycle** — Context Gap Analyzer → Agent Instruction Forge → Rule Quality Evaluator → Context Eval → EDD
 
-**After something goes wrong** → Retrospective/Counterfactual → 5 Whys → Epistemic Mapping → Decision Synthesis
-
-**Communicating a decision** → Decision Synthesis → Argument Craft → Execution Planning
-
-**Building a business case** → Fermi Estimation → Financial Modeling → Scenario Planning → Argument Craft
-
-**Negotiating an agreement** → Game-Theoretic Analysis → Negotiation Strategy → Difficult Conversations (if needed)
-
-**Validating a hypothesis** → Epistemic Mapping → Experimental Design → [run experiment] → Causal Inference → Evidence Synthesis
-
-**Learning a new domain** → Epistemic Mapping → Learning Strategy → [learning] → Evidence Synthesis → Decision Synthesis
-
-**Evaluating architecture** → Systems Thinking → Architecture Evaluation → Inversion/Pre-mortem → Decision Synthesis → Execution Planning
-
-**Fixing a broken process** → Systems Thinking + Theory of Constraints → Process Design → Execution Planning
-
-**Assessing fairness** → Ethical Reasoning → Fairness Auditing → Decision Synthesis
-
-**Debugging software** → Debugging Methodology → 5 Whys / Causal Inference → fix
-
-**Checking whether a context harness is worth the tokens** → Context Eval
-
-**Iterating on a context harness** → EDD (uses Context Eval as measurement engine)
-
-**Agent is failing, need to diagnose** → Context Debugging → fix → EDD to validate fix
-
-**Full context engineering lifecycle** → Context Cartography (design) → EDD (validate) → Context Debugging (when it breaks) → Context Eval (measure)
-
-**Creating agent instructions from scratch** → Context Gap Analyzer (audit gaps) → Agent Instruction Forge (create rules) → EDD (validate rules improve agent behavior)
+**Creating agent instructions** — Context Gap Analyzer (audit) → Agent Instruction Forge (create) → Rule Quality Evaluator (score) → EDD (validate)
 
 ---
 
 ## Structure
 
 ```
-skills/
-├── agent-instruction-forge/
-├── analogical-thinking/
-├── architecture-evaluation/
-├── argument-craft/
-├── bisociative-creativity/
-├── business-logic-extractor/
-├── causal-inference/
-├── code-review-amplifier/
-├── cognitive-bias-detection/
-├── context-cartography/
-├── context-debugging/
-├── context-eval/
-├── context-gap-analyzer/
-├── cynefin-framework/
-├── debugging-methodology/          ← NEW
-├── decision-intelligence/
-├── decision-synthesis/
-├── deep-document-processor/
-├── difficult-conversations/
-├── edd/
-├── epistemic-mapping/
-├── ethical-reasoning/
-├── evidence-synthesis/
-├── execution-planning/
-├── experimental-design/
-├── facilitation-design/
-├── fairness-auditing/
-├── fermi-estimation/
-├── financial-modeling/
-├── first-principles-thinking/
-├── five-whys-root-cause/
-├── game-theoretic-analysis/
-├── inversion-premortem/
-├── lateral-thinking/
-├── learning-strategy/
-├── llms-txt-generator/
-├── narrative-construction/
-├── negotiation-strategy/
-├── probabilistic-thinking/
-├── process-design/
+skills/                        # flat — npx skills discovers these
 ├── reasoning-orchestrator/
-├── red-teaming/
-├── retrospective-counterfactual/
-├── scenario-planning/
-├── second-order-thinking/
-├── stakeholder-power-mapping/
-├── system-thinking/
-├── test-challenger/
-└── theory-of-constraints/
-    └── SKILL.md
+├── first-principles-thinking/
+├── agent-instruction-forge/
+├── context-eval/
+├── ...50 skills total
+│   └── SKILL.md
+
+plugins/                       # Claude Code marketplace overlay (symlinks)
+├── reasoning/          → 22 skills
+├── context-engineering/ → 11 skills
+├── professional/       → 17 skills
+└── all/                → 50 skills
+
+.claude-plugin/
+└── marketplace.json           # craftwork marketplace
 ```
 
-Each `SKILL.md` has a YAML frontmatter `description` field — this is what Claude reads to decide whether to consult the skill for a given query.
+Skills live flat at root for `npx skills` compatibility. The `plugins/` directory contains symlinks grouped by category for the Claude Code marketplace.
 
 ---
 
-## Orchestration
+## License
 
-- [`reasoning-orchestrator`](skills/reasoning-orchestrator/SKILL.md) — The entry point for the collection. Triages the situation, selects the right skill(s), sequences them, and routes between them based on what each run surfaces. Start here when unsure which framework to apply.
+MIT
