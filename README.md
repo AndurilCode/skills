@@ -6,23 +6,23 @@
 
 ```bash
 # All skills (any agent)
-npx skills add gpavanello/skills
+npx skills add AndurilCode/craftwork
 
 # List available skills first
-npx skills add gpavanello/skills --list
+npx skills add AndurilCode/craftwork --list
 
 # Specific skills only
-npx skills add gpavanello/skills --skill reasoning-orchestrator --skill agent-instruction-forge
+npx skills add AndurilCode/craftwork --skill reasoning-orchestrator --skill agent-instruction-forge
 
 # Specific agent only
-npx skills add gpavanello/skills -a claude-code
+npx skills add AndurilCode/craftwork -a claude-code
 ```
 
 ### Claude Code Plugin (selective install by category)
 
 ```bash
 # Add the marketplace
-/plugin marketplace add https://github.com/gpavanello/skills
+/plugin marketplace add https://github.com/AndurilCode/craftwork
 
 # Install by category
 /plugin install reasoning@craftwork              # 22 thinking frameworks
