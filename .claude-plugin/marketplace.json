@@ -1,8 +1,9 @@
 {
   "name": "craftwork",
-  "metadata": {
-    "description": "Reasoning, context engineering, and professional skills for Claude Code",
-    "pluginRoot": "../plugins"
+  "description": "Reasoning, context engineering, and professional skills for Claude Code",
+  "owner": {
+    "name": "Gabe Pavanello",
+    "email": "gabry.pavanello@gmail.com"
   },
   "plugins": [
     {
