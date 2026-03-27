@@ -18,6 +18,34 @@ The mode is determined by Phase 1 discovery. If any instruction files are found,
 
 ---
 
+## Fast Path
+
+If you need the shortest reliable execution path, do this:
+
+1. **Detect mode**
+   - Existing instruction files present → **Augment**
+   - No instruction files → **Greenfield**
+   - No codebase access → **Interview-Only**
+2. **Always finish Phase 1 before asking the human anything**
+   - Scan instruction surfaces
+   - Sample real code patterns
+   - Mine git/PR history if available
+3. **In Augment mode, do not rewrite first**
+   - Audit rules
+   - Produce a Discovery Brief
+   - Ask only the verification / gap-filling questions the audit makes necessary
+4. **Start interactive extraction with the Failure Round**
+   - Ask 2-4 questions
+   - Probe for file path, correct pattern, and why
+5. **Synthesize as a scoped diff, not a monolith**
+   - remove / rewrite / add / re-scope
+6. **Before finalizing, adversarially validate if possible**
+   - newcomer / prior-override / contradiction checks
+
+If a response skips mode detection, skips the audit in augment mode, or jumps straight to rewriting, it is probably missing the highest-value part of this skill.
+
+---
+
 ## What Makes an Agent Instruction Rule Exceptional
 
 Before executing, internalize these principles — they govern every phase.
@@ -33,20 +61,8 @@ BAD: "Don't use console.log" → GOOD: "Don't use console.log — use src/lib/lo
 **3. Born from a real failure** — past failures produce the most specific rules because the human remembers the pain.
 GOOD: "Never add indexes to the reservations table without DBA approval. In Q2 2024 a compound index locked the table for 47 minutes."
 
-**4. Scoped to the right level of the tree** — a rule must live where the agent encounters the code it governs. Not higher (wasting tokens on every interaction), not lower (duplicated across siblings). This applies at arbitrary depth — a monorepo with `packages/billing/src/api/` deserves rules scoped there, not dumped in the repo root.
-
-The principle: **what is common stays in common rules; what is package-specific stays in package-level rules.** A rule about error handling that applies everywhere belongs at the root. A rule about how the billing API formats responses belongs in `packages/billing/`. A rule about a specific adapter's retry logic belongs in that adapter's directory. Avoid broad wildcards (e.g., `applyTo: "**/*.ts"`) that spray package-specific rules across the entire codebase — this is the scoping equivalent of a global variable.
-
-```
-repo root:                Cross-cutting rules (auth, logging, error philosophy)
-├── packages/billing/:    Billing domain rules, payment API conventions
-│   └── src/adapters/:    Adapter-specific rules (retry, idempotency)
-├── packages/web/:        Frontend rules (component patterns, state management)
-│   └── src/components/:  Component-specific rules (naming, props, testing)
-└── packages/shared/:     Shared library rules (versioning, API contracts)
-```
-
-Every rule should pass the **scope test**: "Does this rule apply to ALL code the agent will see when working in this directory's context?" If not, push it deeper. If it applies everywhere equally, pull it up.
+**4. Scoped to the right level of the tree** — put a rule at the highest directory where it is universally true. Pull global rules up. Push package-specific rules down. Avoid broad wildcards like `**/*.ts` for package-specific logic.
+Scope test: "Does this rule apply to ALL code the agent will see in this directory?" If not, move it deeper.
 
 **5. Points to the canonical example** — agents learn patterns better from a concrete reference than from abstract description.
 GOOD: "New API endpoints follow src/api/reservations/create.ts — handler → validation → service → response mapping."
@@ -75,23 +91,10 @@ Read the codebase to understand what exists before asking the human anything. Th
 
 #### Step 1: Discover existing instruction infrastructure
 
-Scan for all files that could be carrying agent context:
-
-```
-Scan targets (examples — discover broadly, don't limit to this list):
-- .github/copilot-instructions.md
-- .github/instructions/*.instructions.md (path-specific Copilot rules — check applyTo frontmatter)
-- .github/prompts/*.prompt.md (reusable Copilot prompt files)
-- AGENTS.md, CLAUDE.md, GEMINI.md, .cursorrules, .windsurfrules
-- .context/, .ctx files
-- ARCHITECTURE.md, CONTRIBUTING.md, CONVENTIONS.md
-- ADR directories (adr/, doc/adr/, docs/decisions/)
-- README.md (look for "development" or "conventions" sections)
-- .editorconfig, .prettierrc, .eslintrc, tsconfig, pyproject.toml
-- Makefile / justfile / Taskfile (targets reveal workflow conventions)
-- CI configs (.github/workflows/, .gitlab-ci.yml, Jenkinsfile)
-- Docker configs, docker-compose.yml
-```
+Scan broadly for files that may already steer agents or contributors:
+- Root and scoped instruction files: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, `.github/prompts/*.prompt.md`
+- Supporting context: `.context/`, `.ctx`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CONVENTIONS.md`, ADR dirs
+- Workflow signals: `.editorconfig`, formatter/linter configs, `tsconfig`, `pyproject.toml`, `Makefile`/`justfile`/`Taskfile`, CI files, Docker configs
 
 For each discovered file, read it and inventory:
 - What topics it covers
@@ -142,51 +145,35 @@ For each signal found, capture: the source (commit/PR), the candidate rule, the 
 
 If existing instruction files were found in Step 1, perform a deep audit before asking the human anything. This is the most valuable step in augment mode — it turns a vague "improve our rules" into a concrete, prioritized action plan.
 
-**For each existing rule, evaluate:**
+For each existing rule, evaluate:
 
-**A. Seven Properties Score**
-Rate each rule 0-7 based on how many of the Seven Properties it satisfies. Flag rules scoring ≤ 2 as candidates for rewrite. A rule that is neither specific nor falsifiable (Property 1 = 0) should always be flagged — it's noise in the context window.
+**A. Seven Properties Score** — rate 0-7 by how many of the Seven Properties it satisfies. Flag `<=2` for rewrite or removal. If it fails Property 1 (specific and falsifiable), treat it as noise.
 
-**B. Code Alignment Check**
-Cross-reference each rule against the actual code found in Step 2-3:
-- **Confirmed**: The rule matches patterns actually found in code. Keep it.
-- **Stale**: The rule describes a pattern that no longer exists, or uses outdated file paths / APIs. Flag for removal or update.
-- **Aspirational**: The rule prescribes something the codebase doesn't actually follow (e.g., "all services have integration tests" but only 2 of 15 do). Present to the human with two options: **(a)** the rule is stale — code moved on, remove or update it; **(b)** the rule is a target — code should eventually comply, keep it but mark it as "aspirational-by-design" so the agent treats it as directional, not descriptive of current state. Never auto-remove aspirational rules — only the human knows the intent.
-- **Contradicted**: The code actively does the opposite of what the rule says. Critical flag — this is the most harmful type of rule because it pushes agents to fight the codebase.
-- **Unverifiable**: The rule covers something not observable in code (e.g., deployment procedures, team communication). Can't validate — leave for human confirmation.
+**B. Code Alignment Check** — mark each rule as:
+- **Confirmed**: matches real code patterns
+- **Stale**: describes a pattern that no longer exists
+- **Aspirational**: desired future state, not current reality
+- **Contradicted**: code does the opposite
+- **Unverifiable**: not checkable from code
 
-**C. Coverage Mapping**
-Map each existing rule to one of the Nine Context Categories (from the context-gap-analyzer framework):
-- C1: Architecture & System Boundaries
-- C2: Domain Model & Business Rules
-- C3: Conventions & Patterns
-- C4: Integration & External Dependencies
-- C5: Operations & Deployment
-- C6: Testing Philosophy & Strategy
-- C7: Security Model
-- C8: Performance Constraints
-- C9: Historical Decisions & Tech Debt
+**C. Coverage Mapping** — map rules to C1-C9:
+- C1 Architecture & Boundaries
+- C2 Domain Model & Business Rules
+- C3 Conventions & Patterns
+- C4 Integrations & External Dependencies
+- C5 Operations & Deployment
+- C6 Testing Philosophy & Strategy
+- C7 Security Model
+- C8 Performance Constraints
+- C9 Historical Decisions & Tech Debt
 
-Identify which categories have strong coverage, which have partial coverage, and which are completely missing.
+**D. Redundancy / Contradiction Detection** — flag rules duplicated by lint, type system, CI, or other instruction files. Redundant rules waste tokens; contradictory rules actively mislead agents.
 
-**D. Redundancy & Contradiction Detection**
-Identify rules that duplicate or contradict:
-- Linters/formatters (ESLint, Prettier, Ruff, etc.) — redundant, remove
-- Type system (TypeScript strict mode, mypy) — redundant, remove
-- CI checks (tests, build validation) — redundant, remove
-- Other instruction files (cross-file duplication) — merge into one location
-- Other instruction files (cross-file contradiction) — critical flag, these confuse agents unpredictably. A rule in `.github/copilot-instructions.md` that contradicts one in `AGENTS.md` is worse than having no rule at all
-
-Redundant rules waste token budget. Contradictory rules actively harm agent behavior. Flag both for resolution.
-
-**E. Scoping Assessment**
-For each rule, determine the narrowest scope it actually applies to by mapping it against the codebase's module/package tree from Step 2. Apply the **scope test**: "Does this rule apply to ALL code an agent sees in this directory's context?"
-
-Flag:
-- **Over-scoped rules**: sitting in the repo root but only relevant to a specific package or module. These waste token budget on every agent interaction in unrelated areas. Recommend pushing to package-level instruction file.
-- **Under-scoped rules**: duplicated across multiple package-level files when they apply universally. Recommend pulling up to root.
-- **Wildcard abuse**: rules using broad `applyTo` globs (e.g., `**/*.ts`) that spray package-specific logic across unrelated modules. Recommend narrowing the glob to the actual target directory.
-- **Missing intermediate levels**: all rules at root + leaf, nothing at package level. If the module tree has 3+ levels of depth, check whether an intermediate instruction file would prevent duplication.
+**E. Scoping Assessment** — apply the scope test and flag:
+- **Over-scoped**: should move deeper
+- **Under-scoped**: duplicated rules that should move up
+- **Wildcard abuse**: broad `applyTo` globs for package-specific logic
+- **Missing intermediate levels**: nothing between repo root and leaf packages
 
 Write the audit output as a concise table (note the Scope column):
 
@@ -214,62 +201,25 @@ Scope health: [N] rules correctly scoped, [N] over-scoped, [N] under-scoped
 
 Synthesize findings into a brief for the human. This serves two purposes: (a) showing the human what you already know so they don't repeat it, and (b) identifying the exact gaps where human input is needed.
 
-**In Greenfield mode**, the brief focuses on what the code tells you and what gaps you've identified:
+**Greenfield brief**:
+- Target agent system and file format
+- No existing instruction files found
+- What the code already reveals
+- Top candidate rules from git/PR history
+- Highest-value undocumented gaps
 
-```
-DISCOVERY BRIEF — Greenfield
-═══════════════════════════════════════════
-Target agent system: [detected or ask — Copilot / Claude Code / Cursor / etc.]
-Instruction file format: [detected — .md / .cursorrules / etc.]
-No existing instruction files found.
+**Augment brief**:
+- Existing instruction files
+- Rule health summary: keep / rewrite / verify / remove / re-scope
+- Top issues
+- Rules surfaced from git/PR history but not documented
+- Coverage gaps, undocumented patterns, token budget
 
-What the code already tells an agent:
-  - [pattern/convention detected from code]
-  ...
-
-Rules surfaced from git history / PR reviews:
-  - [N] candidate rules from commit messages (confidence: high/medium/low)
-  - [N] candidate rules from PR review comments
-  [list top 3-5 highest-confidence candidates with source]
-
-What's NOT documented but likely matters:
-  - [gap identified — e.g., "no error handling convention documented, but 3 different patterns found in code"]
-  ...
-```
-
-**In Augment mode**, the brief leads with the audit results:
-
-```
-DISCOVERY BRIEF — Augment
-═══════════════════════════════════════════
-Target agent system: [detected]
-Existing instruction files: [list with file paths]
-
-RULE HEALTH: [N] rules → ✅ [n] strong, 🔧 [n] rewrite, ⚠️ [n] verify, 🗑️ [n] remove
-TOP ISSUES:
-  1. [e.g., "8 of 12 rules lack a WHY — agents will optimize around them"]
-  2. [e.g., "All rules in repo-wide file, 5 should be scoped to /src/api/"]
-  3. [e.g., "No coverage of testing (C6) or historical decisions (C9)"]
-
-RULES HIDDEN IN GIT HISTORY (not in any instruction file):
-  - [candidate rule] — source: [PR #N / commit abc123] — confidence: [H/M/L]
-  ...
-
-COVERAGE GAPS: [list C-codes with missing/weak coverage and why it matters]
-UNDOCUMENTED PATTERNS FROM CODE: [list patterns found but not in any rule file]
-Token budget: [current] / [limit]
-```
-
-Present this brief to the human. Ask them to confirm or correct before proceeding. In augment mode, specifically ask:
-
-```
-"Before we start improving, I want to verify my findings:
- 1. Are any of the rules I flagged for removal actually important? (I may have missed context)
- 2. Are any rules I marked as 'confirmed' actually outdated? (Code can lag behind intent)
- 3. I found [N] candidate rules hidden in PR comments and commit history. Which of these
-    are real conventions worth documenting? (I'll show you each one)
- 4. Which coverage gaps feel most urgent to you?"
-```
+Present the brief, then verify your findings before proceeding. In augment mode, ask:
+- Are any rules flagged for removal actually important?
+- Are any "confirmed" rules outdated or aspirational?
+- Which hidden rules from history are real conventions worth documenting?
+- Which coverage gaps matter most right now?
 
 ---
 
@@ -409,64 +359,25 @@ Transform extracted knowledge into agent-consumable rules. This is where most in
 
 **In Augment mode**: Do NOT rewrite from scratch unless the existing rules are fundamentally broken. Instead, produce a changeset that preserves what works and surgically improves the rest:
 
-1. **Remove**: Delete rules flagged 🗑️ in the audit (after human confirmation). Each removal frees token budget for higher-value rules.
+1. **Remove** low-signal rules flagged 🗑️.
+2. **Rewrite in place** for rules flagged 🔧, preserving grouping and tone.
+3. **Add** new rules from extraction where coverage is missing.
+4. **Re-scope** rules flagged 📦 to package- or directory-level files.
+5. **Update coverage** and show the delta from Phase 1.
 
-2. **Rewrite in-place**: For rules flagged 🔧, rewrite them to satisfy more of the Seven Properties while preserving their position and grouping in the file. Show the human before/after for each rewrite so they can catch meaning drift.
+Present the changeset as a reviewable diff, not a monolithic rewrite. For each edit, say what changed and why.
 
-3. **Add new rules**: Insert rules from the extraction phase into the appropriate section of the existing file. Match the tone, format, and structure already established. Don't reorganize the entire file unless the human explicitly asks.
-
-4. **Re-scope**: Move every rule flagged 📦 in the audit to its correct level in the module tree. Create new package/directory-level instruction files as needed — don't hesitate to split a bloated root file into a root + N package files. This is often the single highest-impact structural improvement: it reduces token waste on every agent interaction in unrelated areas while making rules more visible where they matter. When using Copilot, convert over-scoped root rules into `.instructions.md` files with precise `applyTo` globs targeting the actual package path, not wildcards.
-
-5. **Update coverage**: After all changes, regenerate the coverage map and show improvement vs. the Phase 1 baseline.
-
-Present the changeset as a structured diff — not a monolithic new file — so the human can review incrementally:
-
-```
-PROPOSED CHANGES
-═══════════════════════════════════════════
-REMOVALS (N rules — saves ~X tokens):
-  ❌ "Write clean code" — unfalsifiable, zero signal
-  ❌ "Use semicolons" — already enforced by Prettier
-
-REWRITES (N rules — showing before/after):
-  🔧 BEFORE: "Don't use console.log"
-     AFTER:  "Don't use console.log — use src/lib/logger.ts. Our structured
-              logger feeds Datadog with correlation IDs. console.log breaks tracing."
-     [Added: WHY, canonical path, consequence]
-
-NEW RULES (N rules):
-  ✨ [C4] "Stripe API requires idempotency keys on all POSTs. Use
-     src/lib/stripe/idempotency.ts. Missing keys → duplicate charges (March 2024 incident)."
-
-RE-SCOPED (N rules):
-  📦 "React CSS modules rule" → .github/instructions/frontend.instructions.md
-
-COVERAGE: 4/9 categories → 6/9 | Tokens: ~2,800 → ~3,100 / 4,000
-```
+Keep at least one compact before/after example when rewriting:
+- BEFORE: `Don't use console.log`
+- AFTER: `Don't use console.log — use src/lib/logger.ts. Structured logs feed Datadog; console.log breaks correlation IDs.`
 
 #### Synthesis Protocol
 
-1. **Scope each rule to the right level of the module tree.** This is the most impactful structural decision — it determines whether a rule fires precisely or pollutes unrelated contexts.
-
-   Walk the codebase's directory tree and assign each rule to the narrowest directory where it applies universally:
-   - If it applies to ALL code in the repo → root instruction file
-   - If it applies to one package/module → package-level instruction file
-   - If it applies to a subdirectory within a package → subdirectory-level file
-   - If it applies to a specific file type within a scope → use `applyTo` globs (Copilot) or directory-level files (Claude Code, Cursor)
-
-   **Never scope wider than necessary.** A billing API response format rule in the root file means every agent interaction — even in the frontend package — burns tokens reading it. Push it to `packages/billing/` or deeper.
-
-   **Create intermediate instruction files** when the tree is deep. If you have 15 rules and 10 apply only to `packages/billing/`, don't keep them all at root — create `packages/billing/CLAUDE.md` (or equivalent). The depth of the instruction tree should mirror the depth of the module tree.
-
-   **Inheritance is your friend.** Root rules apply everywhere. Package rules add to (or override) root rules within that package. This means a rule should live at the highest level where it's universally true, and be overridden at lower levels only when a package genuinely needs different behavior.
-
-2. **Apply the Seven Properties**: For each rule, verify it meets as many of the seven properties as possible. At minimum, every rule must be *specific and falsifiable* (Property 1).
-
-3. **Match the existing format**: If the codebase already has instruction files with a specific tone and format, match them exactly. If starting fresh, use terse imperative prose (highest token efficiency, clearest for agents).
-
-4. **Order by impact**: Put the most important rules first. Agents may see a truncated version of long instruction files. Front-load what matters most.
-
-5. **Add the meta-rule**: Include a brief section explaining the codebase's philosophy or "spirit" — this helps agents make correct *judgment calls* in situations no rule covers explicitly.
+1. **Scope correctly**: root for universal rules, package-level for package rules, deeper files for subdirectory rules, `applyTo` globs only when truly file-type-specific.
+2. **Apply the Seven Properties**: every rule must at least be specific and falsifiable.
+3. **Match local format**: preserve existing tone and structure unless the human asks for reorganization.
+4. **Order by impact**: critical rules first because long files may be truncated.
+5. **Add a short philosophy section**: help agents make judgment calls in cases no explicit rule covers.
 
 #### Output Structure Template (Greenfield mode only)
 
@@ -490,62 +401,31 @@ Different systems use different units — respect the native unit:
 - **Claude Code**: limits in **tokens**. Root: < 4,000 tokens. Subdirectory: < 1,000 tokens.
 - **Cursor / Windsurf / AGENTS.md**: similar to Claude Code.
 
-When WHY and brevity conflict, keep the WHY. Proper scoping is the best token budget strategy — a well-scoped rule set is naturally smaller per file because each file only carries what's relevant to its scope.
-
-If the rules are too long, prioritize ruthlessly. Move secondary rules into scoped files or reference documents. The highest-impact rules go in the repo-wide file; pattern-specific rules go in scoped files near the code they govern.
+When WHY and brevity conflict, keep the WHY. The main token-budget lever is scoping: keep repo-wide files short, push local rules down, and move low-frequency detail into references or prompts.
 
 ---
 
 ### PHASE 3b — Adversarial Validation
 
-Before showing rules to the human, stress-test them with three adversarial subagents. Each subagent receives ONLY the synthesized instruction file — not the codebase, not the Phase 1 findings, not the conversation history. This context isolation is what makes the validation genuine: the challenger knows nothing except what the rules say.
+Before showing rules to the human, stress-test them with three isolated subagents that receive ONLY the synthesized instruction file. Read `references/adversarial-validation.md` for prompts and protocol.
 
-**Read `references/adversarial-validation.md` for full subagent prompts, evaluation protocols, and integration guidance.**
+Run in parallel:
+1. **Simulated Newcomer** — finds gaps
+2. **Prior Override Test** — checks whether rules beat common training priors
+3. **Cross-rule Contradiction Finder** — finds conflicts and ambiguities
 
-#### Execution
-
-Spawn three subagents in PARALLEL. Each receives the instruction file as its sole context:
-
-1. **Simulated Newcomer** (catches **gaps**): Give it the instruction file + a realistic task (e.g., "add a new API endpoint for user preferences"). It writes code. Compare output against actual codebase conventions from Phase 1. Deviations reveal: ✅ rule works, ⚠️ rule exists but too weak, ❌ gap — no rule covers this. The newcomer's explicitly-noted assumptions are especially valuable — each is a candidate rule.
-
-2. **Prior Override Test** (catches **weakness**): Give it the instruction file + 4-6 questions where common training priors conflict with rules (e.g., "how do you handle errors?" when the rule says `Result<T>` but agents default to try/catch). Score override rate — below 75% means rules are systemically too weak.
-
-3. **Cross-rule Contradiction Finder** (catches **inconsistency**): Give it the instruction file and ask it to find scenarios where following Rule A requires violating Rule B, plus rules ambiguous enough for opposite interpretations.
-
-**Critical**: Do NOT include codebase files, Phase 1 analysis, or any other context in the subagent prompts. The whole point is isolation — if the subagent can only succeed by reading the rules, then the rules are working.
-
-#### After all challenges
-
-Update the instruction file before presenting to the human:
-- Add rules for Newcomer gaps. Strengthen rules with low override rates. Resolve contradictions.
-- Include the validation summary in Phase 4 — it's evidence the rules were tested, not just written.
-
-```
-ADVERSARIAL VALIDATION SUMMARY
-Simulated Newcomer: [N] correct, [N] weak, [N] gaps → [N] rules added
-Prior Override: [N/M] override rate — [list failed topics]
-Contradictions: [N] found → resolved | Ambiguities: [N] found → clarified
-```
+Do not include codebase files, Phase 1 findings, or conversation history in those prompts. After validation, update the rules and include a short summary of gaps, weak spots, and resolved contradictions.
 
 ---
 
 ### PHASE 4 — Review, Refinement & Delivery
 
-Present the synthesized rules to the human. Frame the review around quality:
+Present the synthesized rules to the human and review them for:
+1. **Accuracy** — wrong or outdated?
+2. **Priority** — anything critical missing or low-value?
+3. **Tone** — does it sound like the team?
 
-```
-"Here are the synthesized rules. Before we finalize, I want you to check three things:
-
-1. ACCURACY — Is any rule wrong or outdated?
-2. PRIORITY — Is anything critical missing? Is anything included that doesn't matter much?
-3. TONE — Does this sound like your team? Would a teammate read this and nod?"
-```
-
-Iterate based on feedback. Common refinement patterns:
-- Rule is too vague → ask for a concrete example, rewrite with specificity
-- Rule is wrong → correct and verify with human
-- Missing context → run a targeted mini-extraction (1-2 questions) for the specific gap
-- Too long → help prioritize, move lower-priority rules to scoped files or a separate reference doc
+Iterate based on feedback: clarify vague rules, correct inaccuracies, fill narrow gaps with targeted questions, and trim low-priority content.
 
 #### Delivery
 
@@ -575,19 +455,15 @@ After delivery, suggest: run your agent on a real task and see if rules improve 
 
 ## Calibration Rules for This Skill
 
-**1. The human is the oracle, not the bottleneck.** Minimize their effort per unit of extracted knowledge. Ask sharp questions. Accept concise answers. Never make them feel like they're filling out a form.
+**1. Code-reading comes first.** Don't ask the human what the code already answers.
 
-**2. Code-reading comes first.** Every question you ask that the code already answers is a trust-eroding waste of the human's time. Do your homework.
+**2. The human is the oracle, not the bottleneck.** Ask sharp questions, in small batches, and accept concise answers.
 
-**3. Specificity is non-negotiable.** If a rule can't be violated, it can't be followed. Every rule must be falsifiable. Push back on vague answers during extraction — "Can you give me a concrete example?" is always valid.
+**3. Specificity is non-negotiable.** If a rule can't be violated, it can't be followed.
 
-**4. Rules from failures > rules from aspirations.** A rule born from a real production incident carries more signal than ten rules from a style guide. Always start with failures.
+**4. Failures beat aspirations.** Start from painful review cycles, incidents, and recurring corrections.
 
-**5. Don't generate rules the agent doesn't need.** If the linter catches it, don't write a rule. If the code makes it obvious, don't write a rule. Only document the delta between "what the code says" and "what a competent team member knows."
-
-**6. Respect the token budget — but WHY beats brevity.** The instruction file competes with actual code for context window space. Every token must earn its place. But when forced to choose between a terse rule without rationale and a longer rule with WHY, keep the WHY. Agents circumvent rules they don't understand.
-
-**7. Match the team's voice.** If the team writes terse commit messages and short PR descriptions, the instruction file should be terse. If they write detailed RFCs, the file can be more explanatory. Mirror the culture.
+**5. Respect the token budget.** Document only the delta between code and tacit team knowledge. Keep the WHY when it matters; cut everything else.
 
 ---
 
