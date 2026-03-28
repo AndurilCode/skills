@@ -26,6 +26,7 @@ Read what the user wants to do and match it to the closest entry below. If ambig
 | Build a financial model or business case | `financial-modeling` | → `argument-craft` |
 | **Writing & Communication** | | |
 | Write an RFC, design doc, ADR, runbook, postmortem, one-pager, or announcement | `technical-writing` | → `narrative-construction` if storytelling needed |
+| Summarize a document, article, transcript, or meeting notes | `summarizer` | → `technical-writing` or `argument-craft` if needed |
 | Structure a recommendation or argument | `argument-craft` | → `technical-writing` to write it up |
 | Tell a compelling story from analysis | `narrative-construction` | done |
 | Prepare for a negotiation | `negotiation-strategy` | → `difficult-conversations` if high stakes |
@@ -113,3 +114,4 @@ Use when a system needs moral and equity analysis, then communication of finding
 | `casual-inference` | Distinguish causation from correlation |
 | `technical-writing` | Write RFCs, design docs, ADRs, runbooks, postmortems, announcements |
 | `topic-explainer` | Explain concepts, technologies, or ideas using the best style for the topic |
+| `summarizer` | Summarize documents, articles, transcripts, or multi-source content |

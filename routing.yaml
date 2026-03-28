@@ -81,6 +81,7 @@ groups:
       - stakeholder-power-mapping
       - technical-writing
       - topic-explainer
+      - summarizer
 
 # Directed composition edges
 # Each edge: from skill → to skill, with a condition for when it applies.
@@ -289,6 +290,12 @@ edges:
   - from: topic-explainer
     to: technical-writing
     when: topic understood, need to document it for others
+  - from: summarizer
+    to: technical-writing
+    when: summary reveals content that needs formal documentation
+  - from: summarizer
+    to: argument-craft
+    when: summary reveals findings that need to be argued to stakeholders
 
   # ── Professional: Financial ──
   - from: financial-modeling
@@ -355,6 +362,10 @@ edges:
   - from: evidence-synthesis
     to: argument-craft
     when: evidence ready, need to present findings
+    cross_group: true
+  - from: deep-document-processor
+    to: summarizer
+    when: document processed, need compressed output
     cross_group: true
 
 # Named canonical chains (documented in README)
