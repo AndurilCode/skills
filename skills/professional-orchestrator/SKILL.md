@@ -24,8 +24,9 @@ Read what the user wants to do and match it to the closest entry below. If ambig
 | Break a decision into an action plan | `execution-planning` | done |
 | Design or improve a workflow/process | `process-design` | → `execution-planning` |
 | Build a financial model or business case | `financial-modeling` | → `argument-craft` |
-| **Communication & Persuasion** | | |
-| Structure a recommendation or argument | `argument-craft` | → `narrative-construction` if story needed |
+| **Writing & Communication** | | |
+| Write an RFC, design doc, ADR, runbook, postmortem, one-pager, or announcement | `technical-writing` | → `narrative-construction` if storytelling needed |
+| Structure a recommendation or argument | `argument-craft` | → `technical-writing` to write it up |
 | Tell a compelling story from analysis | `narrative-construction` | done |
 | Prepare for a negotiation | `negotiation-strategy` | → `difficult-conversations` if high stakes |
 | Navigate a difficult conversation | `difficult-conversations` | done |
@@ -74,6 +75,12 @@ process-design → execution-planning
 ```
 Use when a workflow is slow or broken.
 
+**Documenting a technical decision:**
+```
+architecture-evaluation → technical-writing (ADR or RFC)
+```
+Use when an architecture decision needs to be written up for review or posterity.
+
 **Ethics review:**
 ```
 ethical-reasoning → fairness-auditing → argument-craft
@@ -103,3 +110,4 @@ Use when a system needs moral and equity analysis, then communication of finding
 | `fairness-auditing` | Audit systems for equitable outcomes across groups |
 | `learning-strategy` | Build structured plans for closing knowledge gaps |
 | `casual-inference` | Distinguish causation from correlation |
+| `technical-writing` | Write RFCs, design docs, ADRs, runbooks, postmortems, announcements |

@@ -79,6 +79,7 @@ groups:
       - process-design
       - professional-orchestrator
       - stakeholder-power-mapping
+      - technical-writing
 
 # Directed composition edges
 # Each edge: from skill → to skill, with a condition for when it applies.
@@ -235,8 +236,17 @@ edges:
     to: narrative-construction
     when: logic alone won't convince, need storytelling
   - from: argument-craft
+    to: technical-writing
+    when: argument structured, need to write it up as a document
+  - from: argument-craft
     to: execution-planning
     when: argument accepted, need action plan
+  - from: architecture-evaluation
+    to: technical-writing
+    when: architecture decided, need to write ADR or RFC
+  - from: technical-writing
+    to: narrative-construction
+    when: draft done, needs storytelling polish
 
   # ── Professional: Conflict & negotiation ──
   - from: negotiation-strategy
@@ -286,6 +296,10 @@ edges:
   - from: decision-synthesis
     to: argument-craft
     when: decision made, needs communication
+    cross_group: true
+  - from: decision-synthesis
+    to: technical-writing
+    when: decision made, needs to be documented (ADR, RFC, announcement)
     cross_group: true
   - from: decision-synthesis
     to: execution-planning
