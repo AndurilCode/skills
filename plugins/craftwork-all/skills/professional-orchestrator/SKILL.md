@@ -41,6 +41,10 @@ Read what the user wants to do and match it to the closest entry below. If ambig
 | Surface moral implications of a decision | `ethical-reasoning` | → `fairness-auditing` if systemic concerns |
 | Audit a system for equitable outcomes | `fairness-auditing` | → `argument-craft` to present findings |
 | Determine causation vs correlation | `casual-inference` | done |
+| **Knowledge Management** | | |
+| Capture a decision, learning, or piece of tribal knowledge | `knowledge-architect` | → `technical-writing` if formal doc needed |
+| Set up or improve a team's knowledge system | `knowledge-architect` | done (produces architecture) |
+| Someone is leaving / joining the team | `knowledge-architect` | detect mode for departures, audit for joiners |
 
 ---
 
@@ -130,3 +134,4 @@ Use when a system needs moral and equity analysis, then communication of finding
 | `topic-explainer` | Explain concepts, technologies, or ideas using the best style for the topic |
 | `summarizer` | Summarize documents, articles, transcripts, or multi-source content |
 | `presentation-craft` | Create presentation scripts with narrative arc, slide visuals, and speaker notes |
+| `knowledge-architect` | Capture decisions, context, and learnings; design team knowledge systems |

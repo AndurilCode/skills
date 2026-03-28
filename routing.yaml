@@ -83,6 +83,7 @@ groups:
       - topic-explainer
       - summarizer
       - presentation-craft
+      - knowledge-architect
 
 # Directed composition edges
 # Each edge: from skill → to skill, with a condition for when it applies.
@@ -306,6 +307,12 @@ edges:
   - from: narrative-construction
     to: presentation-craft
     when: story crafted, need to build a presentation around it
+  - from: architecture-evaluation
+    to: knowledge-architect
+    when: architecture decided, need to capture the decision as a knowledge artifact
+  - from: knowledge-architect
+    to: technical-writing
+    when: knowledge artifact needs to be a formal document (RFC, ADR, runbook)
 
   # ── Professional: Financial ──
   - from: financial-modeling
@@ -376,6 +383,10 @@ edges:
   - from: deep-document-processor
     to: summarizer
     when: document processed, need compressed output
+    cross_group: true
+  - from: context-gap-analyzer
+    to: knowledge-architect
+    when: implicit knowledge gaps found, need to capture missing knowledge
     cross_group: true
 
 # Named canonical chains (documented in README)
