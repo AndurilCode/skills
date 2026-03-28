@@ -80,6 +80,7 @@ groups:
       - professional-orchestrator
       - stakeholder-power-mapping
       - technical-writing
+      - topic-explainer
 
 # Directed composition edges
 # Each edge: from skill → to skill, with a condition for when it applies.
@@ -282,6 +283,12 @@ edges:
   - from: learning-strategy
     to: execution-planning
     when: learning plan ready, need scheduling
+  - from: learning-strategy
+    to: topic-explainer
+    when: knowledge gap identified, need explanation of a specific concept
+  - from: topic-explainer
+    to: technical-writing
+    when: topic understood, need to document it for others
 
   # ── Professional: Financial ──
   - from: financial-modeling

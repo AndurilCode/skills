@@ -33,7 +33,8 @@ Read what the user wants to do and match it to the closest entry below. If ambig
 | Design a meeting or workshop | `facilitation-design` | done |
 | **People & Organizations** | | |
 | Map stakeholder influence and blockers | `stakeholder-power-mapping` | → `negotiation-strategy` or `difficult-conversations` |
-| Ramp up on a new domain | `learning-strategy` | → `execution-planning` for study plan |
+| Ramp up on a new domain | `learning-strategy` | → `topic-explainer` for specific concepts |
+| Understand or learn a concept, technology, or idea | `topic-explainer` | → `technical-writing` to document it |
 | **Ethics & Fairness** | | |
 | Surface moral implications of a decision | `ethical-reasoning` | → `fairness-auditing` if systemic concerns |
 | Audit a system for equitable outcomes | `fairness-auditing` | → `argument-craft` to present findings |
@@ -111,3 +112,4 @@ Use when a system needs moral and equity analysis, then communication of finding
 | `learning-strategy` | Build structured plans for closing knowledge gaps |
 | `casual-inference` | Distinguish causation from correlation |
 | `technical-writing` | Write RFCs, design docs, ADRs, runbooks, postmortems, announcements |
+| `topic-explainer` | Explain concepts, technologies, or ideas using the best style for the topic |
