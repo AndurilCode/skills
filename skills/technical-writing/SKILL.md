@@ -21,6 +21,8 @@ Every piece of technical writing, regardless of format, must obey these laws in 
 
 **Law 3 — Match depth to audience size.** A Slack message to your team can be one sentence. An ADR for 3-5 reviewers can go deep into trade-offs. A company-wide announcement should be scannable in 30 seconds. The narrower the audience, the more detail is justified.
 
+**Quick-fire rule for Slack and short messages**: If the user asks you to write a Slack message, async message, or any communication under 5 sentences — skip all ceremony. Apply the Three Laws directly: open with the ask, include only the context needed for the decision, close with an explicit request. Do not run the full Step 1-5 process. This is the highest-frequency use case and the one where the Three Laws have the most impact.
+
 ---
 
 ## How to Execute This Skill
@@ -156,16 +158,17 @@ don't need an RFC.]
 
 ## Alternatives Considered
 
-[This is one of the most important sections.
-Always include "Do nothing" as a baseline.
+**RULE: The first alternative must ALWAYS be "Do Nothing" (maintain status quo).**
+This forces the author to articulate why change is necessary and gives
+reviewers a baseline to compare against. An RFC that can't explain why
+"do nothing" is worse than the proposal hasn't justified its existence.
 
-For each alternative:
+For each alternative (including "Do Nothing"):
 - What is it?
 - What trade-offs does it make?
 - Why was it not selected?
 
-This section shows future readers your decision-making context
-and prevents "why didn't you just..." questions.]
+This section prevents "why didn't you just..." questions.]
 
 ## Cross-Cutting Concerns
 
@@ -330,7 +333,7 @@ Include Slack channel, PagerDuty service, phone numbers.]
 
 ### TEMPLATE: Postmortem / Incident Review
 
-Optimized for organizational learning. The goal is preventing recurrence, not assigning blame.
+Optimized for organizational learning. The goal is preventing recurrence, not assigning blame. Most agents already produce reasonable postmortem structure — the critical differentiator is **action item quality**.
 
 ```markdown
 # Postmortem: [Incident title — what happened, not why]
@@ -342,58 +345,38 @@ Optimized for organizational learning. The goal is preventing recurrence, not as
 **Reviewers**: [names]
 
 ## Summary
-
-[3-5 sentences. What happened, what was the impact, how was it resolved.
-Write this for someone who wasn't involved.]
+[3-5 sentences. What happened, impact, resolution. Written for someone who wasn't involved.]
 
 ## Timeline
-
-[Chronological list of events. Use UTC timestamps.
-Focus on detection, diagnosis, and resolution actions.
-Include who did what.]
-
 | Time (UTC) | Event |
 |------------|-------|
-| 14:32 | Monitoring alert fires for payment-service latency |
-| 14:35 | On-call engineer acknowledges, begins investigation |
-| ... | ... |
+| HH:MM | [event] |
 
 ## Root Cause
-
-[Technical root cause. Be specific.
-"A database migration added an index on a 500M-row table
-without `CONCURRENTLY`, locking writes for 12 minutes."]
+[Be specific. "A database migration added an index on a 500M-row table
+without `CONCURRENTLY`, locking writes for 12 minutes." Not "a configuration error."]
 
 ## Impact
-
-[Quantified. Users affected, revenue impact, SLA breaches,
-data integrity issues.]
+[Quantified: users affected, revenue, SLA breaches, data integrity.]
 
 ## What Went Well
-
-[What worked during the response. Celebrate good practices.]
-
 ## What Went Poorly
-
-[What slowed detection, diagnosis, or resolution. Be honest.]
-
 ## Action Items
 
 | Action | Owner | Priority | Due Date |
 |--------|-------|----------|----------|
 | [Specific, verifiable action] | [name] | P1/P2/P3 | [date] |
 
-[Every action item must be specific enough that you can verify
-whether it was done. "Improve monitoring" is not an action item.
-"Add alert when payment-service P99 > 3s for 5 minutes" is.]
-
 ## Lessons Learned
-
-[1-3 broader lessons that apply beyond this specific incident.
-These are the reusable insights.]
+[1-3 broader lessons beyond this specific incident.]
 ```
 
-**Calibration**: The quality of a postmortem is measured by whether the action items get completed, not by the quality of the prose. Keep the writing tight so people focus on the actions.
+**The action items section is where postmortems succeed or fail.** Apply these rules strictly:
+
+- Every action item must be **verifiable** — you can check whether it was done. "Improve monitoring" fails this test. "Add alert when payment-service P99 > 3s for 5 minutes" passes.
+- Every action item must have an **owner** (a person, not a team), a **priority**, and a **due date**. Missing any of these makes the item aspirational, not actionable.
+- Exploratory items ("Investigate...", "Explore...") are not action items. Either commit to the investigation with a due date for findings, or drop it.
+- 3-5 action items is the sweet spot. More than 7 means you haven't prioritized.
 
 ---
 
