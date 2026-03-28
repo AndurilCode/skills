@@ -48,7 +48,20 @@ Read what the user wants to do and match it to the closest entry below. If ambig
 
 1. Read `skills/[skill-name]/SKILL.md`
 2. Apply that skill's full methodology
-3. When the skill completes, check the "Then" column above — if a follow-up is indicated and the findings match, read and execute the next skill
+3. When the skill completes, check the "Then" column above for potential follow-ups
+
+## Step 3 — Propose Next Steps
+
+Do NOT auto-execute the "Then" skill. Instead, propose it to the user:
+
+```
+Based on [what the skill produced], a natural next step would be:
+→ [skill-name]: [1-sentence reason this would help]
+
+Want me to continue with that, or is this what you needed?
+```
+
+If multiple follow-ups are relevant, list them as options. The user chooses — the orchestrator does not chain automatically.
 
 ---
 

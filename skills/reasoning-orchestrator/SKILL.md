@@ -144,6 +144,14 @@ Key finding: [1–2 sentences]
 Recommended action: [what to do now]
 ```
 
+Then propose relevant follow-up skills to the user. Do NOT auto-execute. Common follow-ups after reasoning chains:
+
+- Decision made → "Want me to write this up? (`technical-writing` for an ADR/RFC, `argument-craft` to structure the case)"
+- Plan needed → "Want me to break this into an execution plan? (`execution-planning`)"
+- Communication needed → "Want me to prepare a presentation? (`presentation-craft`) or draft the announcement? (`technical-writing`)"
+
+Present only follow-ups that are relevant to the findings. If no follow-up is needed, say so.
+
 ---
 
 ## Parallelization Reference
