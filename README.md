@@ -1,6 +1,6 @@
 # Craftwork
 
-50 agent skills for reasoning, context engineering, and professional work. Works with Claude Code, Cursor, Codex, and [40+ agents](https://github.com/vercel-labs/skills#available-agents).
+52 agent skills for reasoning, context engineering, and professional work. Works with Claude Code, Cursor, Codex, and [40+ agents](https://github.com/vercel-labs/skills#available-agents).
 
 ## Install
 
@@ -25,10 +25,10 @@ npx skills add AndurilCode/craftwork -a claude-code
 /plugin marketplace add https://github.com/AndurilCode/craftwork
 
 # Install by category
-/plugin install craftwork-reasoning@craftwork              # 22 thinking frameworks
-/plugin install craftwork-context-engineering@craftwork     # 11 context/agent tools
-/plugin install craftwork-professional@craftwork            # 17 architecture/communication skills
-/plugin install craftwork-all@craftwork                     # everything
+/plugin install craftwork-reasoning@craftwork              # 22 thinking frameworks (includes orchestrator)
+/plugin install craftwork-context-engineering@craftwork     # 12 context/agent tools (includes orchestrator)
+/plugin install craftwork-professional@craftwork            # 18 architecture/communication skills (includes orchestrator)
+/plugin install craftwork-all@craftwork                     # everything (52 skills)
 ```
 
 ---
@@ -37,7 +37,7 @@ npx skills add AndurilCode/craftwork -a claude-code
 
 ### reasoning (22 skills)
 
-Thinking frameworks for analysis, decisions, and problem-solving.
+Thinking frameworks for analysis, decisions, and problem-solving. Includes its own orchestrator for guided routing.
 
 | Category | Skills |
 |----------|--------|
@@ -49,9 +49,9 @@ Thinking frameworks for analysis, decisions, and problem-solving.
 | **Decide** | [decision-synthesis](plugins/craftwork-reasoning/skills/decision-synthesis/SKILL.md), [decision-intelligence](plugins/craftwork-reasoning/skills/decision-intelligence/SKILL.md), [retrospective-counterfactual](plugins/craftwork-reasoning/skills/retrospective-counterfactual/SKILL.md), [evidence-synthesis](plugins/craftwork-reasoning/skills/evidence-synthesis/SKILL.md) |
 | **Orchestrate** | [reasoning-orchestrator](plugins/craftwork-reasoning/skills/reasoning-orchestrator/SKILL.md) — entry point, triages and routes to the right framework |
 
-### context-engineering (11 skills)
+### context-engineering (12 skills)
 
-Build, evaluate, and debug agent context — instructions, harnesses, evals, and documentation.
+Build, evaluate, and debug agent context — instructions, harnesses, evals, and documentation. Includes its own orchestrator for guided routing.
 
 | Skill | Purpose |
 |-------|---------|
@@ -66,10 +66,11 @@ Build, evaluate, and debug agent context — instructions, harnesses, evals, and
 | [deep-document-processor](plugins/craftwork-context-engineering/skills/deep-document-processor/SKILL.md) | Multi-pass reading to extract decision-relevant context from large documents |
 | [business-logic-extractor](plugins/craftwork-context-engineering/skills/business-logic-extractor/SKILL.md) | Extract domain rules and business logic from code into structured references |
 | [test-challenger](plugins/craftwork-context-engineering/skills/test-challenger/SKILL.md) | Find false positives in AI-generated tests |
+| **Orchestrate** | [context-engineering-orchestrator](plugins/craftwork-context-engineering/skills/context-engineering-orchestrator/SKILL.md) — entry point, routes to the right context skill |
 
-### professional (17 skills)
+### professional (18 skills)
 
-Architecture, code quality, process design, communication, and leadership.
+Architecture, code quality, process design, communication, and leadership. Includes its own orchestrator for guided routing.
 
 | Skill | Purpose |
 |-------|---------|
@@ -90,6 +91,7 @@ Architecture, code quality, process design, communication, and leadership.
 | [fairness-auditing](plugins/craftwork-professional/skills/fairness-auditing/SKILL.md) | Audit systems for equitable outcomes across groups |
 | [learning-strategy](plugins/craftwork-professional/skills/learning-strategy/SKILL.md) | Build structured plans for closing knowledge gaps |
 | [casual-inference](plugins/craftwork-professional/skills/casual-inference/SKILL.md) | Distinguish causation from correlation in metrics and experiments |
+| **Orchestrate** | [professional-orchestrator](plugins/craftwork-professional/skills/professional-orchestrator/SKILL.md) — entry point, routes to the right professional skill |
 
 ---
 
@@ -111,6 +113,14 @@ Skills compose. Common sequences:
 
 **Creating agent instructions** — Context Gap Analyzer (audit) → Agent Instruction Forge (create) → Rule Quality Evaluator (score) → EDD (validate)
 
+**Architecture decision** — Architecture Evaluation → Argument Craft → Execution Planning
+
+**Navigating organizational resistance** — Stakeholder Power Mapping → Negotiation Strategy → Difficult Conversations
+
+**Building a business case** — Financial Modeling → Argument Craft → Execution Planning
+
+Each plugin group has its own orchestrator that routes within its skills. When multiple groups are installed, cross-group chains are documented in `routing.yaml`.
+
 ---
 
 ## Structure
@@ -118,17 +128,22 @@ Skills compose. Common sequences:
 ```
 skills/                        # flat — npx skills discovers these
 ├── reasoning-orchestrator/
+├── context-engineering-orchestrator/
+├── professional-orchestrator/
 ├── first-principles-thinking/
 ├── agent-instruction-forge/
 ├── context-eval/
-├── ...50 skills total
+├── ...52 skills total
 │   └── SKILL.md
 
 plugins/                       # Claude Code marketplace plugins
-├── craftwork-reasoning/          → 22 skills
-├── craftwork-context-engineering/ → 11 skills
-├── craftwork-professional/       → 17 skills
-└── craftwork-all/                → 50 skills
+├── craftwork-reasoning/          → 22 skills (includes orchestrator)
+├── craftwork-context-engineering/ → 12 skills (includes orchestrator)
+├── craftwork-professional/       → 18 skills (includes orchestrator)
+└── craftwork-all/                → 52 skills (all orchestrators)
+
+routing.yaml                   # single source of truth for skill composition
+scripts/validate-routing.sh    # validates routing.yaml against actual skills
 
 .claude-plugin/
 └── marketplace.json           # craftwork marketplace

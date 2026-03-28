@@ -1,0 +1,461 @@
+# routing.yaml — Single source of truth for skill composition
+#
+# This file is a BUILD-TIME artifact. It never ships to users.
+# Run `./scripts/generate-routing.sh` to produce:
+#   1. Per-group orchestrator SKILL.md files
+#   2. "Composes With" sections appended to each skill's SKILL.md
+#   3. Validation report (orphan references, missing skills)
+#
+# Schema:
+#   groups:        Plugin group definitions and their skills
+#   edges:         Directed composition links (from → to)
+#   chains:        Named canonical sequences (ordered lists of skills)
+#   parallel_sets: Skills that can run concurrently (independent lenses)
+
+groups:
+  reasoning:
+    plugin: craftwork-reasoning
+    orchestrator: reasoning-orchestrator
+    skills:
+      - analogical-thinking
+      - bisociative-creativity
+      - cognitive-bias-detection
+      - cynefin-framework
+      - decision-intelligence
+      - decision-synthesis
+      - epistemic-mapping
+      - evidence-synthesis
+      - fermi-estimation
+      - first-principles-thinking
+      - five-whys-root-cause
+      - game-theoretic-analysis
+      - inversion-premortem
+      - lateral-thinking
+      - probabilistic-thinking
+      - reasoning-orchestrator
+      - red-teaming
+      - retrospective-counterfactual
+      - scenario-planning
+      - second-order-thinking
+      - system-thinking
+      - theory-of-constraints
+
+  context-engineering:
+    plugin: craftwork-context-engineering
+    orchestrator: context-engineering-orchestrator
+    skills:
+      - agent-instruction-forge
+      - business-logic-extractor
+      - context-cartography
+      - context-debugging
+      - context-eval
+      - context-engineering-orchestrator
+      - context-gap-analyzer
+      - deep-document-processor
+      - edd
+      - llms-txt-generator
+      - rule-quality-evaluator
+      - test-challenger
+
+  professional:
+    plugin: craftwork-professional
+    orchestrator: professional-orchestrator
+    skills:
+      - architecture-evaluation
+      - argument-craft
+      - casual-inference
+      - code-review-amplifier
+      - debugging-methodology
+      - difficult-conversations
+      - ethical-reasoning
+      - execution-planning
+      - experimental-design
+      - facilitation-design
+      - fairness-auditing
+      - financial-modeling
+      - learning-strategy
+      - narrative-construction
+      - negotiation-strategy
+      - process-design
+      - professional-orchestrator
+      - stakeholder-power-mapping
+
+# Directed composition edges
+# Each edge: from skill → to skill, with a condition for when it applies.
+# cross_group: true means the edge only works when both groups are installed.
+edges:
+  # ── Reasoning: Diagnostic chains ──
+  - from: system-thinking
+    to: theory-of-constraints
+    when: bottleneck identified
+  - from: system-thinking
+    to: five-whys-root-cause
+    when: root cause needed
+  - from: theory-of-constraints
+    to: five-whys-root-cause
+    when: constraint identified, need root cause
+  - from: five-whys-root-cause
+    to: decision-synthesis
+    when: multiple root causes found, need to prioritize
+
+  # ── Reasoning: Meta-cognitive ──
+  - from: epistemic-mapping
+    to: first-principles-thinking
+    when: dangerous assumptions found
+  - from: epistemic-mapping
+    to: lateral-thinking
+    when: stuck, need new options
+  - from: epistemic-mapping
+    to: cynefin-framework
+    when: domain complexity unclear
+  - from: cynefin-framework
+    to: lateral-thinking
+    when: domain is complex
+  - from: cynefin-framework
+    to: scenario-planning
+    when: domain is complex
+
+  # ── Reasoning: Adversarial validation ──
+  - from: inversion-premortem
+    to: cognitive-bias-detection
+    when: high-severity risks found
+  - from: red-teaming
+    to: cognitive-bias-detection
+    when: high-severity risks found
+  - from: second-order-thinking
+    to: decision-synthesis
+    when: consequence chains mapped
+
+  # ── Reasoning: Uncertainty quantification ──
+  - from: fermi-estimation
+    to: probabilistic-thinking
+    when: estimates need probability distributions
+  - from: probabilistic-thinking
+    to: scenario-planning
+    when: probabilities need future scenarios
+  - from: scenario-planning
+    to: decision-synthesis
+    when: scenarios enumerated, need to choose
+
+  # ── Reasoning: Strategic ──
+  - from: game-theoretic-analysis
+    to: second-order-thinking
+    when: repeated game dynamics, need reputation effects
+  - from: game-theoretic-analysis
+    to: decision-synthesis
+    when: Nash equilibrium ≠ Pareto optimum, mechanism design needed
+
+  # ── Reasoning: Generative ──
+  - from: lateral-thinking
+    to: inversion-premortem
+    when: new options generated, need validation
+  - from: analogical-thinking
+    to: inversion-premortem
+    when: analogy-based design, need stress-test
+  - from: first-principles-thinking
+    to: decision-synthesis
+    when: fundamentals established, need to decide
+
+  # ── Reasoning: Convergence ──
+  - from: decision-synthesis
+    to: evidence-synthesis
+    when: key assumption too uncertain, need evidence review
+  - from: evidence-synthesis
+    to: decision-synthesis
+    when: evidence synthesized, decision needed
+  - from: retrospective-counterfactual
+    to: five-whys-root-cause
+    when: systemic cause found
+  - from: retrospective-counterfactual
+    to: epistemic-mapping
+    when: need to map what was unknown
+
+  # ── Context Engineering: Lifecycle ──
+  - from: context-gap-analyzer
+    to: agent-instruction-forge
+    when: gaps identified, need to create rules
+  - from: context-gap-analyzer
+    to: context-cartography
+    when: need to design what goes in the context window
+  - from: agent-instruction-forge
+    to: rule-quality-evaluator
+    when: rules created, need scoring
+  - from: agent-instruction-forge
+    to: edd
+    when: rules created, need eval-driven validation
+  - from: rule-quality-evaluator
+    to: context-eval
+    when: rules scored, need outcome measurement
+  - from: edd
+    to: context-eval
+    when: assertions defined, need measurement
+  - from: context-eval
+    to: agent-instruction-forge
+    when: eval shows regression, iterate on rules
+
+  # ── Context Engineering: Documentation ──
+  - from: deep-document-processor
+    to: llms-txt-generator
+    when: document processed, need LLM-friendly output
+  - from: business-logic-extractor
+    to: llms-txt-generator
+    when: domain rules extracted, need LLM-friendly output
+  - from: business-logic-extractor
+    to: agent-instruction-forge
+    when: domain rules extracted, need agent instructions
+
+  # ── Context Engineering: Debugging ──
+  - from: context-debugging
+    to: context-gap-analyzer
+    when: failure traced to missing context
+  - from: context-debugging
+    to: context-cartography
+    when: failure traced to context design
+  - from: context-debugging
+    to: edd
+    when: fix applied, need regression test
+
+  # ── Context Engineering: Testing ──
+  - from: test-challenger
+    to: edd
+    when: false positives found, need better eval assertions
+
+  # ── Professional: Architecture ──
+  - from: architecture-evaluation
+    to: execution-planning
+    when: architecture decided, need implementation plan
+    cross_group: false
+  - from: architecture-evaluation
+    to: argument-craft
+    when: architecture decided, need stakeholder buy-in
+    cross_group: false
+
+  # ── Professional: Communication ──
+  - from: argument-craft
+    to: narrative-construction
+    when: logic alone won't convince, need storytelling
+  - from: argument-craft
+    to: execution-planning
+    when: argument accepted, need action plan
+
+  # ── Professional: Conflict & negotiation ──
+  - from: negotiation-strategy
+    to: difficult-conversations
+    when: emotional stakes or power asymmetry too high
+  - from: stakeholder-power-mapping
+    to: negotiation-strategy
+    when: key stakeholders identified, need negotiation prep
+  - from: stakeholder-power-mapping
+    to: difficult-conversations
+    when: blockers identified, need direct conversation
+
+  # ── Professional: Process ──
+  - from: process-design
+    to: execution-planning
+    when: process designed, need implementation
+  - from: debugging-methodology
+    to: casual-inference
+    when: root cause is a causal claim
+
+  # ── Professional: Ethics ──
+  - from: ethical-reasoning
+    to: fairness-auditing
+    when: systemic fairness concerns identified
+  - from: fairness-auditing
+    to: argument-craft
+    when: audit complete, need to communicate findings
+
+  # ── Professional: Learning & experimentation ──
+  - from: experimental-design
+    to: casual-inference
+    when: experiment complete, need causal analysis
+  - from: learning-strategy
+    to: execution-planning
+    when: learning plan ready, need scheduling
+
+  # ── Professional: Financial ──
+  - from: financial-modeling
+    to: scenario-planning
+    when: model needs stress-testing
+    cross_group: true
+  - from: financial-modeling
+    to: argument-craft
+    when: numbers ready, need to make the case
+
+  # ── Cross-group edges (only active when both groups installed) ──
+  - from: decision-synthesis
+    to: argument-craft
+    when: decision made, needs communication
+    cross_group: true
+  - from: decision-synthesis
+    to: execution-planning
+    when: decision made, needs execution
+    cross_group: true
+  - from: decision-synthesis
+    to: ethical-reasoning
+    when: ethical criteria needed
+    cross_group: true
+  - from: decision-synthesis
+    to: financial-modeling
+    when: financial criteria needed
+    cross_group: true
+  - from: system-thinking
+    to: architecture-evaluation
+    when: system mapped, architecture decision needed
+    cross_group: true
+  - from: system-thinking
+    to: process-design
+    when: system mapped, process redesign needed
+    cross_group: true
+  - from: game-theoretic-analysis
+    to: stakeholder-power-mapping
+    when: strategic agents identified, need influence mapping
+    cross_group: true
+  - from: game-theoretic-analysis
+    to: negotiation-strategy
+    when: negotiation needed
+    cross_group: true
+  - from: epistemic-mapping
+    to: learning-strategy
+    when: knowledge gaps identified
+    cross_group: true
+  - from: epistemic-mapping
+    to: experimental-design
+    when: hypothesis needs testing
+    cross_group: true
+  - from: context-gap-analyzer
+    to: system-thinking
+    when: gaps are structural, need system-level analysis
+    cross_group: true
+  - from: debugging-methodology
+    to: five-whys-root-cause
+    when: root cause is structural
+    cross_group: true
+  - from: evidence-synthesis
+    to: argument-craft
+    when: evidence ready, need to present findings
+    cross_group: true
+
+# Named canonical chains (documented in README)
+chains:
+  evaluating-something:
+    description: Understand why a system behaves the way it does
+    group: reasoning
+    steps:
+      - cynefin-framework
+      - system-thinking
+      - theory-of-constraints
+      - five-whys-root-cause
+
+  validating-a-plan:
+    description: Stress-test a plan before committing
+    group: reasoning
+    steps:
+      - epistemic-mapping
+      - first-principles-thinking
+      - inversion-premortem
+      - second-order-thinking
+      - decision-synthesis
+
+  high-stakes-decision:
+    description: Make a decision under uncertainty with quantification
+    group: reasoning
+    steps:
+      - scenario-planning
+      - probabilistic-thinking
+      - fermi-estimation
+      - red-teaming
+      - decision-synthesis
+
+  stuck-no-options:
+    description: Generate new options when all current ones feel the same
+    group: reasoning
+    steps:
+      - epistemic-mapping
+      - lateral-thinking
+      - analogical-thinking
+      - first-principles-thinking
+
+  after-something-went-wrong:
+    description: Learn from failure
+    group: reasoning
+    steps:
+      - retrospective-counterfactual
+      - five-whys-root-cause
+      - epistemic-mapping
+      - decision-synthesis
+
+  context-engineering-lifecycle:
+    description: Full cycle from audit to validated agent instructions
+    group: context-engineering
+    steps:
+      - context-gap-analyzer
+      - agent-instruction-forge
+      - rule-quality-evaluator
+      - context-eval
+      - edd
+
+  creating-agent-instructions:
+    description: Create and validate agent instruction files
+    group: context-engineering
+    steps:
+      - context-gap-analyzer
+      - agent-instruction-forge
+      - rule-quality-evaluator
+      - edd
+
+  architecture-decision:
+    description: Evaluate architecture and plan implementation
+    group: professional
+    steps:
+      - architecture-evaluation
+      - argument-craft
+      - execution-planning
+
+  building-a-business-case:
+    description: Quantify, model, and argue for a business decision
+    group: professional
+    steps:
+      - financial-modeling
+      - argument-craft
+      - execution-planning
+
+  navigating-organizational-resistance:
+    description: Map stakeholders and prepare for difficult conversations
+    group: professional
+    steps:
+      - stakeholder-power-mapping
+      - negotiation-strategy
+      - difficult-conversations
+
+# Canonical parallel sets (skills that apply independent lenses)
+parallel_sets:
+  adversarial:
+    description: Validate a plan before commitment
+    group: reasoning
+    skills: [inversion-premortem, red-teaming, second-order-thinking]
+
+  generative:
+    description: Generate new options when stuck
+    group: reasoning
+    skills: [lateral-thinking, analogical-thinking, first-principles-thinking]
+
+  diagnostic:
+    description: Understand why a system is failing
+    group: reasoning
+    skills: [system-thinking, theory-of-constraints]
+
+  uncertainty:
+    description: Quantify uncertainty for decision-making
+    group: reasoning
+    skills: [scenario-planning, probabilistic-thinking, fermi-estimation]
+
+  meta-cognitive:
+    description: Clean the reasoning environment before analysis
+    group: reasoning
+    skills: [epistemic-mapping, cognitive-bias-detection, cynefin-framework]
+
+  strategic:
+    description: Analyze multi-agent dynamics and incentives
+    skills: [game-theoretic-analysis, stakeholder-power-mapping, second-order-thinking]
+    cross_group: true
