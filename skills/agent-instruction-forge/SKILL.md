@@ -5,401 +5,216 @@ description: "Guide humans through creating effective instruction rules for codi
 
 # Agent Instruction Forge
 
-**Core thesis**: The difference between mediocre and exceptional agent instructions is not verbosity or coverage — it's *signal density of implicit knowledge*. Generic rules ("write clean code", "follow best practices") actively hurt agent performance (ETH Zurich, 2024: LLM-generated context files reduce success rates ~3%). What works is encoding the specific, non-obvious knowledge that every team member carries but no file in the repo says.
+**Core thesis**: Exceptional agent instructions encode *specific implicit knowledge*, not generic advice. Generic rules ("write clean code") hurt performance (ETH Zurich 2024: LLM-generated context files reduce success ~3%). What works: the non-obvious knowledge every team member carries but no file says.
 
-This skill runs a structured interactive process that works in two modes, detected automatically:
-
-- **Greenfield mode**: No instruction files exist yet. Read the codebase, extract human knowledge, synthesize rules from scratch.
-- **Augment mode**: Instruction files already exist. Audit them for quality and coverage, validate against actual code, identify gaps and stale/weak rules, then guide the human to fill what's missing and strengthen what's there.
-
-The mode is determined by Phase 1 discovery. If any instruction files are found, the skill enters Augment mode.
-
-**If no codebase is accessible** (no filesystem, no files attached, chat-only context): enter **Interview-Only mode**. Skip Phase 1 Steps 2-4 entirely. The Discovery Brief becomes a short statement of what you DON'T know, and Phase 2 relies entirely on the human — lean harder on the Failure Round and Resource Ingestion. Flag to the human: "I can't validate rules against your code, so file paths and patterns will need manual verification before committing."
+**Modes** (detected automatically in Phase 1):
+- **Greenfield**: No instruction files exist. Read codebase, extract knowledge, synthesize rules.
+- **Augment**: Instruction files exist. Audit quality/coverage, validate against code, fill gaps, strengthen weak rules.
+- **Interview-Only**: No codebase access. Skip Phase 1 Steps 2-4. Lean on Failure Round and Resource Ingestion. Flag: "Can't validate rules against code — file paths need manual verification."
 
 ---
 
-## Fast Path
+## Seven Properties of a Great Rule
 
-If you need the shortest reliable execution path, do this:
+1. **Specific & falsifiable** — agent can verify compliance. Unfailable = not a rule.
+   `"Write clean code"` → `"Every external API call must return Result<T, AppError>, never throw."`
 
-1. **Detect mode**
-   - Existing instruction files present → **Augment**
-   - No instruction files → **Greenfield**
-   - No codebase access → **Interview-Only**
-2. **Always finish Phase 1 before asking the human anything**
-   - Scan instruction surfaces
-   - Sample real code patterns
-   - Mine git/PR history if available
-3. **In Augment mode, do not rewrite first**
-   - Audit rules
-   - Produce a Discovery Brief
-   - Ask only the verification / gap-filling questions the audit makes necessary
-4. **Start interactive extraction with the Failure Round**
-   - Ask 2-4 questions
-   - Probe for file path, correct pattern, and why
-5. **Synthesize as a scoped diff, not a monolith**
-   - remove / rewrite / add / re-scope
-6. **Before finalizing, adversarially validate if possible**
-   - newcomer / prior-override / contradiction checks
+2. **Encodes WHY** — without rationale, agents optimize around rules.
+   `"Don't use console.log"` → `"Use src/lib/logger.ts — console.log bypasses Datadog correlation IDs."`
 
-If a response skips mode detection, skips the audit in augment mode, or jumps straight to rewriting, it is probably missing the highest-value part of this skill.
+3. **Born from real failure** — past pain produces the most specific rules.
+   `"Never add indexes to reservations table without DBA approval — Q2 2024 compound index locked table 47min."`
 
----
+4. **Scoped correctly** — highest directory where universally true. Global up, package-specific down. Test: "Applies to ALL code agent sees in this directory?" If not, push deeper.
 
-## What Makes an Agent Instruction Rule Exceptional
+5. **Points to canonical example** — concrete reference > abstract description.
+   `"New endpoints follow src/api/reservations/create.ts — handler → validation → service → response."`
 
-Before executing, internalize these principles — they govern every phase.
+6. **Includes anti-pattern** — overrides training priors when codebase deviates from convention.
+   `"We do NOT use repository pattern. Services call Prisma directly."`
 
-### The Seven Properties of a Great Rule
-
-**1. Specific and falsifiable** — an agent can verify compliance. If a rule can't be violated, it's not a rule.
-BAD: "Write clean, maintainable code" → GOOD: "Every function calling an external API must return Result<T, AppError>, never throw."
-
-**2. Encodes the WHY** — without rationale, agents optimize around rules when inconvenient. The WHY anchors *when* the rule matters.
-BAD: "Don't use console.log" → GOOD: "Don't use console.log — use src/lib/logger.ts. All logs feed Datadog. console.log bypasses correlation IDs and breaks trace stitching."
-
-**3. Born from a real failure** — past failures produce the most specific rules because the human remembers the pain.
-GOOD: "Never add indexes to the reservations table without DBA approval. In Q2 2024 a compound index locked the table for 47 minutes."
-
-**4. Scoped to the right level of the tree** — put a rule at the highest directory where it is universally true. Pull global rules up. Push package-specific rules down. Avoid broad wildcards like `**/*.ts` for package-specific logic.
-Scope test: "Does this rule apply to ALL code the agent will see in this directory?" If not, move it deeper.
-
-**5. Points to the canonical example** — agents learn patterns better from a concrete reference than from abstract description.
-GOOD: "New API endpoints follow src/api/reservations/create.ts — handler → validation → service → response mapping."
-
-**6. Includes the anti-pattern** — telling agents what NOT to do overrides training priors when the codebase does something unusual.
-GOOD: "We do NOT use the repository pattern. Each service calls Prisma directly. Previous attempts added indirection without value."
-
-**7. Token-efficient** — every wasted token is context window not available for code reasoning.
-BAD: "When writing tests, please make sure to use Vitest and not Jest." → GOOD: "Tests: Vitest, never Jest. Config in vitest.config.ts."
+7. **Token-efficient** — every wasted token is context window lost.
+   `"When writing tests, please make sure to use Vitest and not Jest."` → `"Tests: Vitest, never Jest."`
 
 ### What Rules Should NOT Contain
 
-- **Things fixable in code** — if you can solve it with a better type signature, a clearer function name, a well-placed comment at the call site, or a linter rule, do that instead. Code-level fixes are always more reliable than prose instructions.
-- **Things the linter already enforces** — if ESLint/Prettier/Ruff catches it, don't repeat it. The agent will see the lint error.
-- **Language documentation** — don't teach TypeScript. The agent knows TypeScript.
-- **Obvious patterns derivable from code** — if every file in `/src/api/` follows the same structure, the agent will pick up the pattern. Only document it if there are *exceptions* or *non-obvious constraints*.
-- **Aspirational rules nobody follows** — if the rule says "always write integration tests" but the codebase has zero, the rule will confuse the agent. Document reality, not ambition (unless explicitly marked as aspirational-by-design).
+- Things fixable in code (better type signature, clearer name, linter rule)
+- Things linting already enforces
+- Language documentation (agent knows the language)
+- Obvious patterns derivable from reading the code
+- Aspirational rules nobody follows (document reality unless explicitly marked aspirational)
 
 ---
 
-## Execution Process
+## PHASE 1 — Codebase Discovery (Automated)
 
-### PHASE 1 — Codebase Context Discovery (Automated)
+Read the codebase before asking the human anything. Don't ask what the code already answers.
 
-Read the codebase to understand what exists before asking the human anything. This prevents asking questions the code already answers.
+### Step 1: Discover instruction infrastructure
 
-#### Step 1: Discover existing instruction infrastructure
+Scan for: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, `.github/prompts/*.prompt.md`, `.context/`, `.ctx`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, ADR dirs, formatter/linter configs, `tsconfig`/`pyproject.toml`, `Makefile`/`justfile`, CI/Docker configs.
 
-Scan broadly for files that may already steer agents or contributors:
-- Root and scoped instruction files: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, `.github/prompts/*.prompt.md`
-- Supporting context: `.context/`, `.ctx`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CONVENTIONS.md`, ADR dirs
-- Workflow signals: `.editorconfig`, formatter/linter configs, `tsconfig`, `pyproject.toml`, `Makefile`/`justfile`/`Taskfile`, CI files, Docker configs
+For each file: topics covered, staleness, format/tone.
 
-For each discovered file, read it and inventory:
-- What topics it covers
-- How current it feels (stale vs. maintained)
-- What format/tone it uses (terse rules vs. prose vs. structured YAML)
+### Step 2: Codebase topology
 
-#### Step 2: Codebase topology snapshot
+Map: languages, frameworks, package managers, directory structure (2-3 levels), entry points, test structure, external integrations.
 
-Map the high-level structure:
-- Languages, frameworks, package managers
-- Directory structure (2-3 levels deep)
-- Entry points (API routes, CLI commands, main files)
-- Test structure and patterns
-- External service integrations (API clients, SDKs, DB configs)
+### Step 3: Pattern extraction
 
-#### Step 3: Pattern extraction
+Sample 3-5 files from most-modified directories (via `git log --stat` or inferred from size/complexity). Detect: naming conventions, error handling, import organization, logging, test patterns.
 
-Sample 3-5 representative files from the most-modified directories (via `git log --stat` if available; otherwise infer high-traffic areas from directory size, complexity, and proximity to entry points) to detect:
-- Naming conventions actually in use
-- Error handling patterns
-- Import organization
-- Logging patterns
-- Test structure and assertion style
+### Step 3b: History mining (if git/PR available)
 
-#### Step 3b: History mining (if git/PR access available)
+Scan `git log` for reverts, migrations, convention enforcement, hotfixes — each encodes an implicit rule. Search for keywords: convention, instead, revert, breaking, deprecated, don't.
 
-PR review comments and commit messages are the richest untapped source of implicit rules — they capture the exact moment someone said "we don't do it this way" or explained *why* a change was made, but that knowledge rarely migrates to documentation.
+If PR access available (`gh pr list --state merged --limit 30`): scan review corrections ("nit:", "use X instead"), architectural rationale in descriptions, repeated feedback across PRs. Capture: source, candidate rule, category (C1-C9), confidence.
 
-**Commit messages** — scan recent history (`git log --oneline --no-merges -200`) for:
-- **Reverts/fix-ups**: "revert X because Y" directly encodes a rule ("don't do X because Y")
-- **Migration commits**: "migrate from X to Y" signals historical decisions (C9) and anti-patterns
-- **Convention enforcement**: commits that rename, restructure, or standardize carry implicit rules
-- **"Fix:" / "Hotfix:" commits**: encode past failures (Property 3), especially when descriptions explain what went wrong
+If unavailable: skip, ask in Phase 2: "Patterns you correct repeatedly in reviews but aren't documented?"
 
-Use targeted grep to surface high-signal commits: `git log --all --grep="convention\|instead\|revert\|breaking\|deprecated\|don't\|do not" -i --oneline`
-
-**PR/MR review comments** — if the platform is accessible (GitHub CLI `gh pr list --state merged --limit 30 --json title,body,comments,reviews`, GitLab API, or MCP tools), scan recent merged PRs for:
-- **Review corrections**: "nit:", "please use X instead of Y", "we prefer Z here" — these are rules enforced manually but never documented
-- **PR descriptions with architectural rationale**: "this PR moves X to Y because Z" — encodes WHY (Property 2)
-- **Repeated feedback**: the same correction across multiple PRs is a strong undocumented rule
-- **Rejected/revised PRs**: the revision reason often encodes a constraint
-
-For each signal found, capture: the source (commit/PR), the candidate rule, the category (C1-C9), and confidence (High = explicit correction or repeated pattern, Medium = implied from single PR, Low = ambiguous). Prioritize multi-occurrence signals — repetition indicates enforced-but-undocumented rules.
-
-**When git/PR access is unavailable**: Skip this step. In Phase 2, ask the human directly: "Are there patterns you find yourself correcting repeatedly in code reviews that aren't written down anywhere?"
-
-#### Step 4: Rule Audit (Augment Mode Only)
-
-If existing instruction files were found in Step 1, perform a deep audit before asking the human anything. This is the most valuable step in augment mode — it turns a vague "improve our rules" into a concrete, prioritized action plan.
+### Step 4: Rule Audit (Augment Mode Only)
 
 For each existing rule, evaluate:
 
-**A. Seven Properties Score** — rate 0-7 by how many of the Seven Properties it satisfies. Flag `<=2` for rewrite or removal. If it fails Property 1 (specific and falsifiable), treat it as noise.
+- **Seven Properties Score** (0-7). Flag <=2 for rewrite/removal. If a rule fails Property 1 (specific/falsifiable), treat as noise regardless of other scores.
+- **Code Alignment**: Confirmed | Stale | Aspirational | Contradicted | Unverifiable
+- **Coverage** mapped to: C1 Architecture, C2 Domain/Business, C3 Conventions, C4 Integrations, C5 Operations, C6 Testing, C7 Security, C8 Performance, C9 Historical Decisions
+- **Redundancy**: duplicated by lint/types/CI? Contradicts other rules?
+- **Scope**: over-scoped (push down), under-scoped (pull up), wildcard abuse, missing intermediate levels
 
-**B. Code Alignment Check** — mark each rule as:
-- **Confirmed**: matches real code patterns
-- **Stale**: describes a pattern that no longer exists
-- **Aspirational**: desired future state, not current reality
-- **Contradicted**: code does the opposite
-- **Unverifiable**: not checkable from code
-
-**C. Coverage Mapping** — map rules to C1-C9:
-- C1 Architecture & Boundaries
-- C2 Domain Model & Business Rules
-- C3 Conventions & Patterns
-- C4 Integrations & External Dependencies
-- C5 Operations & Deployment
-- C6 Testing Philosophy & Strategy
-- C7 Security Model
-- C8 Performance Constraints
-- C9 Historical Decisions & Tech Debt
-
-**D. Redundancy / Contradiction Detection** — flag rules duplicated by lint, type system, CI, or other instruction files. Redundant rules waste tokens; contradictory rules actively mislead agents.
-
-**E. Scoping Assessment** — apply the scope test and flag:
-- **Over-scoped**: should move deeper
-- **Under-scoped**: duplicated rules that should move up
-- **Wildcard abuse**: broad `applyTo` globs for package-specific logic
-- **Missing intermediate levels**: nothing between repo root and leaf packages
-
-Write the audit output as a concise table (note the Scope column):
-
+Output as table:
 ```
-RULE AUDIT — [file path]
-═══════════════════════════════════════════
-Rule                          | Score | Alignment    | Scope          | Verdict
-"Use Result<T> for API calls" |  6/7  | Confirmed    | ✅ root (global)| ✅ Keep
-"Write clean code"            |  1/7  | Unverifiable | — irrelevant   | 🗑️ Remove
-"Billing API returns envelope"|  5/7  | Confirmed    | ❌ root→billing | 📦 Re-scope
-"Don't modify user schema"    |  4/7  | Confirmed    | ✅ root (global)| 🔧 Rewrite
-...
-
-Summary: [N] total → ✅ [n] keep, 🔧 [n] rewrite, ⚠️ [n] verify, 🗑️ [n] remove, 📦 [n] re-scope
-Redundant with linter/CI: [n] | Stale: [n] | Aspirational: [n] | Contradicted: [n]
-
-Coverage: C1[●] C2[○] C3[●] C4[○] C5[◐] C6[●] C7[○] C8[○] C9[○]
-          ● covered  ◐ partial  ○ missing
-
+Rule | Score | Alignment | Scope | Verdict (✅Keep/🔧Rewrite/⚠️Verify/🗑️Remove/📦Re-scope)
+Summary: N total → keep[n] rewrite[n] verify[n] remove[n] re-scope[n]
+Coverage: C1[●/◐/○] ... C9[●/◐/○]
 Token budget: ~[current] / [limit] — headroom: [remaining]
-Scope health: [N] rules correctly scoped, [N] over-scoped, [N] under-scoped
+Scope health: [N] correct, [N] over-scoped, [N] under-scoped
 ```
 
-#### Step 5: Produce a Discovery Brief
+### Step 5: Discovery Brief
 
-Synthesize findings into a brief for the human. This serves two purposes: (a) showing the human what you already know so they don't repeat it, and (b) identifying the exact gaps where human input is needed.
+Present findings to human:
+- **Greenfield**: target system, what code reveals, top candidate rules from history, highest-value gaps
+- **Augment**: rule health summary, top issues, undocumented rules from history, coverage gaps
 
-**Greenfield brief**:
-- Target agent system and file format
-- No existing instruction files found
-- What the code already reveals
-- Top candidate rules from git/PR history
-- Highest-value undocumented gaps
-
-**Augment brief**:
-- Existing instruction files
-- Rule health summary: keep / rewrite / verify / remove / re-scope
-- Top issues
-- Rules surfaced from git/PR history but not documented
-- Coverage gaps, undocumented patterns, token budget
-
-Present the brief, then verify your findings before proceeding. In augment mode, ask:
-- Are any rules flagged for removal actually important?
-- Are any "confirmed" rules outdated or aspirational?
-- Which hidden rules from history are real conventions worth documenting?
-- Which coverage gaps matter most right now?
+Then verify: any "remove" rules actually important? Any "confirmed" rules outdated? Which history-surfaced rules are real conventions? Which gaps matter most?
 
 ---
 
-### PHASE 2 — Guided Knowledge Extraction (Interactive)
+## PHASE 2 — Knowledge Extraction (Interactive)
 
-This is the core of the skill. The human carries implicit knowledge that no amount of code reading can surface. The goal is to extract it efficiently through the *right* questions.
+Extract implicit knowledge the human carries. 2-4 questions per round. Don't dump 20 questions.
 
-#### Mode-Aware Extraction Strategy
+**In Augment mode**, weave three workstreams into rounds:
+1. **Verify** flagged ⚠️ rules: "This rule says [X]. Still accurate?"
+2. **Fill** coverage gaps: skip well-covered categories, focus on empty ones
+3. **Strengthen** weak 🔧 rules: "Can you tell me *why*? What goes wrong when someone does it differently?" / "Is there a file that best exemplifies this pattern?"
 
-Do NOT dump 20 questions at once. Run this as a conversation with 2-4 questions per round, grouped thematically.
+**Prioritize**: areas where (a) agent writes code most often, (b) code is most ambiguous, (c) existing rules are weakest.
 
-**In Greenfield mode**: Start with the highest-impact category based on the codebase topology. Follow the round sequence below.
+### Round 1 — Failures (Always Start Here)
 
-**In Augment mode**: The extraction is shaped by the audit results. Three workstreams run in parallel, woven into the conversation rounds:
+Highest-signal source. Ask 2-4:
+- "Last time a developer (human or AI) made a frustrating mistake — what happened, what should they have done?"
+- "Any landmines where the obvious approach leads to subtle bugs?"
+- "Most common mistake from new team members?"
+- "Recurring annoyances in agent-generated code you fix every time?"
 
-1. **Verify flagged rules**: Present the ⚠️ rules that need human confirmation. For each, ask: "This rule says [X]. Is this still accurate? Has anything changed?" This is low-effort for the human and immediately improves rule quality.
+Probe each answer: "Point me to a file?" / "What's the correct version?" / "Why this way?"
 
-2. **Fill coverage gaps**: Skip categories that already have strong coverage. Focus extraction questions on the gap categories identified in the audit. If C3 (Conventions) and C6 (Testing) are well-covered but C9 (Historical Decisions) and C4 (Integration) are empty, start there.
-
-3. **Strengthen weak rules**: For rules flagged as 🔧 rewrite, ask targeted questions to supply the missing properties. E.g., if a rule lacks WHY, ask: "This rule says [do X]. Can you tell me *why*? What goes wrong when someone does it differently?" If a rule lacks a canonical example, ask: "Is there a file that best exemplifies this pattern?"
-
-Weave these three workstreams into the round structure below. Skip rounds whose topics are already well-covered by existing rules.
-
-**Question prioritization formula**: Ask first about areas where (a) the agent will write code most often, AND (b) the code alone is most ambiguous or the conventions are most non-obvious. In augment mode, also prioritize (c) areas where existing rules are weakest or most contradicted by code.
-
-#### Round 1 — The Failure Round (Always Start Here)
-
-Past failures are the highest-signal source of implicit knowledge. Ask 2-4 of these:
-
-- "Last time a developer (human or AI) made a frustrating mistake — what did they do wrong, what should they have done?"
-- "Any 'landmines' — areas where doing the obvious thing leads to a subtle bug or painful review?"
-- "Most common mistake in PRs from new team members?"
-- "Any small, recurring annoyances in agent-generated code you fix every time?"
-
-For each answer, immediately probe: "Point me to a file?" / "What does the correct version look like?" / "Why this way instead of the common approach?"
-
-#### Round 2 — The Conventions Round
-
-Focus on conventions that *differ* from framework/language defaults — where agents fail most because training priors pull toward the default.
-
+### Round 2 — Conventions
+Where codebase deviates from framework defaults — where agent training priors mislead. Ask:
 - "Where does your codebase intentionally deviate from the framework's recommended approach?"
 - "Patterns you enforce in code review that linting/CI doesn't catch?"
-- "One rule that would eliminate 50% of code review nit-picks?"
+- "One rule that eliminates 50% of review nit-picks?"
 
-#### Round 3 — The Architecture Round
-
-Boundaries, data flow, module ownership — spatial knowledge agents lack.
-
+### Round 3 — Architecture
+Module boundaries, data flow, where new code goes. Ask:
 - "How should an agent decide which module/directory new code goes in?"
-- "Any modules or files that should NOT be modified without extra caution?"
+- "Any files that shouldn't be modified without extra caution?"
 - "How does data flow for the most common operation?"
 
-#### Round 4 — The Integration Round (if external services detected)
+### Round 4 — Integrations (if external services detected)
+API quirks, dependency approval process, wrapper conventions.
 
-- "External APIs with quirks? (Rate limits, idempotency, known bugs, retry strategies)"
-- "Correct way to add a new external dependency? (Approval, client pattern, wrapper convention)"
+### Round 5 — Testing
+Philosophy, patterns to follow/avoid, mock boundaries.
 
-#### Round 5 — The Testing Round
+### Round 6 — Resource Ingestion (optional)
+"Any existing resource I should read? (Wiki, ADR, Slack thread, postmortem)" — extract rules using Seven Properties.
 
-- "Testing philosophy? (e.g., 'unit test business logic, integration test endpoints, don't mock DB')"
-- "Test patterns to follow — or explicitly avoid?"
-
-#### Round 6 — Resource Ingestion (Optional)
-
-Ask: "Any existing resource I should read? (Wiki, ADR, Slack thread, PR description, postmortem)" — extract rules from provided resources using the seven-property framework, cross-referencing against what's already captured.
-
-#### Adaptive Questioning
-
-Adapt rounds based on codebase type (frontend → component patterns; backend → endpoint/DB conventions; CLI → argument parsing), team size (solo → future-self context; large → consistency/boundaries), agent system (Copilot → completion-level; Claude Code/Cursor → task-level), and human energy (short answers → consolidate; engaged → go deeper; target 15-20 minutes total).
+**Adapt** by: codebase type (frontend→components, backend→endpoints), team size (solo→future-self, large→consistency), agent system (Copilot→completion-level, Claude Code→task-level), human energy (target 15-20 min).
 
 ---
 
-### PHASE 3 — Rule Synthesis & Integration
+## PHASE 3 — Synthesis
 
-Transform extracted knowledge into agent-consumable rules. This is where most instruction files fail — the knowledge exists but it's poorly formatted for agent consumption.
-
-#### Mode-Aware Synthesis
-
-**In Greenfield mode**: Generate instruction files from scratch following the Synthesis Protocol and Output Structure Template below.
-
-**In Augment mode**: Do NOT rewrite from scratch unless the existing rules are fundamentally broken. Instead, produce a changeset that preserves what works and surgically improves the rest:
-
-1. **Remove** low-signal rules flagged 🗑️.
-2. **Rewrite in place** for rules flagged 🔧, preserving grouping and tone.
-3. **Add** new rules from extraction where coverage is missing.
-4. **Re-scope** rules flagged 📦 to package- or directory-level files.
-5. **Update coverage** and show the delta from Phase 1.
-
-Present the changeset as a reviewable diff, not a monolithic rewrite. For each edit, say what changed and why.
-
-Keep at least one compact before/after example when rewriting:
-- BEFORE: `Don't use console.log`
-- AFTER: `Don't use console.log — use src/lib/logger.ts. Structured logs feed Datadog; console.log breaks correlation IDs.`
-
-#### Synthesis Protocol
-
-1. **Scope correctly**: root for universal rules, package-level for package rules, deeper files for subdirectory rules, `applyTo` globs only when truly file-type-specific.
-2. **Apply the Seven Properties**: every rule must at least be specific and falsifiable.
-3. **Match local format**: preserve existing tone and structure unless the human asks for reorganization.
-4. **Order by impact**: critical rules first because long files may be truncated.
-5. **Add a short philosophy section**: help agents make judgment calls in cases no explicit rule covers.
-
-#### Output Structure Template (Greenfield mode only)
-
-Use this template when creating instruction files from scratch. In Augment mode, preserve the existing file's structure and tone — do not reorganize to match this template unless the human explicitly asks.
-
+### Greenfield Mode
+Generate instruction files using:
 ```markdown
-# [Project Name] — Agent Instructions
-## Philosophy — [2-3 sentences anchoring judgment for cases no rule covers]
+# [Project] — Agent Instructions
+## Philosophy — [2-3 sentences anchoring judgment]
 ## Critical Rules — [violations break things: what + why + anti-pattern]
-## Conventions — [violations cause review friction: pattern + example file]
-## Architecture — [module boundaries, data flow, where new code goes]
-## Testing — [philosophy + patterns + what to mock/not mock]
+## Conventions — [review friction: pattern + example file]
+## Architecture — [boundaries, data flow, where new code goes]
+## Testing — [philosophy + patterns + mock boundaries]
 ```
 
-Note: this template is for the ROOT file. Package-level files should be narrower — only rules that apply within that package, with a brief header stating the scope.
+### Augment Mode
+Do NOT rewrite from scratch. Produce a reviewable changeset:
+1. **Remove** 🗑️ low-signal rules
+2. **Rewrite** 🔧 rules in place, preserving grouping/tone
+3. **Add** new rules for coverage gaps
+4. **Re-scope** 📦 rules to appropriate directory level
+5. Show delta from Phase 1
 
-#### Token Budget Awareness
+For each edit: what changed, why. Include before/after example.
 
-Different systems use different units — respect the native unit:
-- **Copilot**: limits in **characters**. Root file: < 1,000 lines. Code review reads first **4,000 chars** per file. Scoped `.instructions.md`: same limit.
-- **Claude Code**: limits in **tokens**. Root: < 4,000 tokens. Subdirectory: < 1,000 tokens.
-- **Cursor / Windsurf / AGENTS.md**: similar to Claude Code.
+### Both Modes
+- Scope: root=universal, package-level=local, `applyTo` globs only when truly file-type-specific
+- Every rule must be specific and falsifiable (Property 1)
+- Order by impact (critical first — long files may truncate)
+- Match existing format/tone in augment mode
 
-When WHY and brevity conflict, keep the WHY. The main token-budget lever is scoping: keep repo-wide files short, push local rules down, and move low-frequency detail into references or prompts.
+### Token Budgets
+
+| System | Unit | Root limit | Notes |
+|--------|------|-----------|-------|
+| Copilot | chars | <1000 lines | Code review reads first 4000 chars/file |
+| Claude Code | tokens | <4000 | Subdir: <1000 tokens |
+| Cursor/Windsurf/AGENTS.md | tokens | ~4000 | Similar to Claude Code |
+
+When WHY and brevity conflict, keep the WHY. Main lever: scope rules down to reduce root file size.
 
 ---
 
-### PHASE 3b — Adversarial Validation
+## PHASE 3b — Adversarial Validation
 
-Before showing rules to the human, stress-test them with three isolated subagents that receive ONLY the synthesized instruction file. Read `references/adversarial-validation.md` for prompts and protocol.
+Before showing rules to human, stress-test with three isolated subagents receiving ONLY the synthesized file (no codebase, no conversation history). Read `references/adversarial-validation.md` for prompts.
 
 Run in parallel:
-1. **Simulated Newcomer** — finds gaps
-2. **Prior Override Test** — checks whether rules beat common training priors
-3. **Cross-rule Contradiction Finder** — finds conflicts and ambiguities
+1. **Newcomer** — finds gaps
+2. **Prior Override** — checks rules beat common training priors
+3. **Contradiction Finder** — finds conflicts and ambiguities
 
-Do not include codebase files, Phase 1 findings, or conversation history in those prompts. After validation, update the rules and include a short summary of gaps, weak spots, and resolved contradictions.
-
----
-
-### PHASE 4 — Review, Refinement & Delivery
-
-Present the synthesized rules to the human and review them for:
-1. **Accuracy** — wrong or outdated?
-2. **Priority** — anything critical missing or low-value?
-3. **Tone** — does it sound like the team?
-
-Iterate based on feedback: clarify vague rules, correct inaccuracies, fill narrow gaps with targeted questions, and trim low-priority content.
-
-#### Delivery
-
-Write the final instruction file(s) to the appropriate location(s) based on the target agent system:
-
-**Copilot** (three layers): repo-wide `.github/copilot-instructions.md`, path-specific `.github/instructions/NAME.instructions.md` (with `applyTo` glob), prompt files `.github/prompts/NAME.prompt.md`. Also reads `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` at root.
-
-**Other systems**: Claude Code → `CLAUDE.md` (root + subdirs), Cursor → `.cursorrules`, Windsurf → `.windsurfrules`, Generic → `AGENTS.md` (root + subdirs, `.context/`/`.ctx`).
-
-If target system is unclear, ask. If multiple, generate for the primary. If Copilot, always use the three-layer structure.
-
-After delivery, suggest: run the agent on a real task. If it still makes a specific mistake, that's the next rule. Revisit monthly.
+Update rules based on findings. Include summary of gaps, weak spots, resolved contradictions.
 
 ---
 
-## Calibration Rules for This Skill
+## PHASE 4 — Review & Delivery
 
-**1. Code-reading comes first.** Don't ask the human what the code already answers.
+Present rules. Review for accuracy, priority, tone. Iterate on feedback.
 
-**2. The human is the oracle, not the bottleneck.** Ask sharp questions, in small batches, and accept concise answers.
+**Write to target location:**
 
-**3. Specificity is non-negotiable.** If a rule can't be violated, it can't be followed.
+| System | Files |
+|--------|-------|
+| Copilot | `.github/copilot-instructions.md` (repo-wide) + `.github/instructions/NAME.instructions.md` (scoped) + `.github/prompts/NAME.prompt.md` |
+| Claude Code | `CLAUDE.md` (root + subdirs) |
+| Cursor | `.cursorrules` |
+| Windsurf | `.windsurfrules` |
+| Generic | `AGENTS.md` (root + subdirs) |
 
-**4. Failures beat aspirations.** Start from painful review cycles, incidents, and recurring corrections.
+If target unclear, ask. If multiple systems, generate for the primary. Copilot always uses three-layer structure.
 
-**5. Respect the token budget.** Document only the delta between code and tacit team knowledge. Keep the WHY when it matters; cut everything else.
-
----
-
-## Composes With
-
-- `context-gap-analyzer` → agent-instruction-forge: Use context-gap-analyzer first to audit what implicit context is missing from a codebase, then use this skill to create the rules that fill those gaps.
-- agent-instruction-forge → `edd`: After creating instruction rules, use EDD to validate that the rules actually improve agent behavior via eval-driven iteration.
-- agent-instruction-forge → `context-eval`: Measure whether the new instruction file produces better agent outcomes than the baseline.
+After delivery: suggest running agent on a real task. Next mistake = next rule. Revisit monthly.
