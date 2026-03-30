@@ -62,6 +62,7 @@ Using the triage output and the routing table below, produce a numbered executio
 | Don't understand the system / why it's failing | PARALLEL: system-thinking ∥ theory-of-constraints → SEQUENTIAL: five-whys-root-cause → decision-synthesis |
 | Don't understand the system / strategic agents involved | PARALLEL: system-thinking ∥ game-theoretic-analysis → SEQUENTIAL: five-whys-root-cause → decision-synthesis |
 | Plan / design needs validation | PARALLEL: inversion-premortem ∥ red-teaming ∥ second-order-thinking → SEQUENTIAL: cognitive-bias-detection → decision-synthesis |
+| Scaling / trajectory / "what if we push this?" | SEQUENTIAL: limit-thinking → PARALLEL: second-order-thinking ∥ scenario-planning → decision-synthesis |
 | Stuck, all solutions feel the same | SEQUENTIAL: epistemic-mapping → PARALLEL: lateral-thinking ∥ analogical-thinking ∥ first-principles-thinking → SEQUENTIAL: inversion-premortem → decision-synthesis |
 | Need to decide between options | PARALLEL: scenario-planning ∥ probabilistic-thinking ∥ fermi-estimation → decision-synthesis |
 | Something went wrong / post-mortem | SEQUENTIAL: retrospective-counterfactual → PARALLEL: five-whys-root-cause ∥ epistemic-mapping → SEQUENTIAL: cognitive-bias-detection |
@@ -187,6 +188,10 @@ After completing any step, use this table to adjust the plan if findings warrant
 | adversarial panel (P1) | High-severity risks | cognitive-bias-detection on the risk analysis (sequential) |
 | generative panel (P2) | All options weak | epistemic-mapping — frame may be wrong (sequential, restart) |
 | uncertainty panel (P4) | High uncertainty persists | inversion-premortem on worst-case scenario (sequential) |
+| limit-thinking | Asymptotic ceiling found | theory-of-constraints to identify the constraint (sequential) |
+| limit-thinking | Reversal / collapse found | first-principles-thinking — is this the right variable? (sequential) |
+| limit-thinking | Optimal operating point identified | decision-synthesis (sequential) |
+| second-order-thinking | Consequence chain suggests trajectory | limit-thinking to trace to the extreme (sequential) |
 | decision-synthesis | Key assumption too uncertain | epistemic-mapping → validate before committing |
 | evidence-synthesis | Evidence synthesized, decision needed | decision-synthesis (sequential) |
 | retrospective-counterfactual | Systemic cause found | system-thinking ∥ five-whys-root-cause (parallel) |
@@ -210,6 +215,7 @@ After completing any step, use this table to adjust the plan if findings warrant
 | fermi-estimation | skills/fermi-estimation/SKILL.md | probabilistic-thinking, scenario-planning |
 | scenario-planning | skills/scenario-planning/SKILL.md | probabilistic-thinking, fermi-estimation |
 | game-theoretic-analysis | skills/game-theoretic-analysis/SKILL.md | second-order-thinking |
+| limit-thinking | skills/limit-thinking/SKILL.md | second-order-thinking, scenario-planning |
 | lateral-thinking | skills/lateral-thinking/SKILL.md | analogical-thinking, first-principles-thinking |
 | analogical-thinking | skills/analogical-thinking/SKILL.md | lateral-thinking, first-principles-thinking |
 | first-principles-thinking | skills/first-principles-thinking/SKILL.md | lateral-thinking, analogical-thinking |

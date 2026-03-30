@@ -1,6 +1,6 @@
 # Craftwork
 
-57 agent skills for reasoning, context engineering, and professional work. Works with Claude Code, Cursor, Codex, and [40+ agents](https://github.com/vercel-labs/skills#available-agents).
+58 agent skills for reasoning, context engineering, and professional work. Works with Claude Code, Cursor, Codex, and [40+ agents](https://github.com/vercel-labs/skills#available-agents).
 
 ## Install
 
@@ -25,17 +25,17 @@ npx skills add AndurilCode/craftwork -a claude-code
 /plugin marketplace add https://github.com/AndurilCode/craftwork
 
 # Install by category
-/plugin install craftwork-reasoning@craftwork              # 22 thinking frameworks (includes orchestrator)
+/plugin install craftwork-reasoning@craftwork              # 23 thinking frameworks (includes orchestrator)
 /plugin install craftwork-context-engineering@craftwork     # 12 context/agent tools (includes orchestrator)
 /plugin install craftwork-professional@craftwork            # 23 architecture/communication skills (includes orchestrator)
-/plugin install craftwork-all@craftwork                     # everything (57 skills)
+/plugin install craftwork-all@craftwork                     # everything (58 skills)
 ```
 
 ---
 
 ## Plugins
 
-### reasoning (22 skills)
+### reasoning (23 skills)
 
 Thinking frameworks for analysis, decisions, and problem-solving. Includes its own orchestrator for guided routing.
 
@@ -43,7 +43,7 @@ Thinking frameworks for analysis, decisions, and problem-solving. Includes its o
 |----------|--------|
 | **Understand the System** | [systems-thinking](plugins/craftwork-reasoning/skills/system-thinking/SKILL.md), [first-principles-thinking](plugins/craftwork-reasoning/skills/first-principles-thinking/SKILL.md), [cynefin-framework](plugins/craftwork-reasoning/skills/cynefin-framework/SKILL.md), [epistemic-mapping](plugins/craftwork-reasoning/skills/epistemic-mapping/SKILL.md) |
 | **Find What's Broken** | [theory-of-constraints](plugins/craftwork-reasoning/skills/theory-of-constraints/SKILL.md), [five-whys-root-cause](plugins/craftwork-reasoning/skills/five-whys-root-cause/SKILL.md), [causal-inference](plugins/craftwork-reasoning/skills/casual-inference/SKILL.md), [cognitive-bias-detection](plugins/craftwork-reasoning/skills/cognitive-bias-detection/SKILL.md) |
-| **Stress-Test** | [inversion-premortem](plugins/craftwork-reasoning/skills/inversion-premortem/SKILL.md), [red-teaming](plugins/craftwork-reasoning/skills/red-teaming/SKILL.md), [second-order-thinking](plugins/craftwork-reasoning/skills/second-order-thinking/SKILL.md) |
+| **Stress-Test** | [inversion-premortem](plugins/craftwork-reasoning/skills/inversion-premortem/SKILL.md), [red-teaming](plugins/craftwork-reasoning/skills/red-teaming/SKILL.md), [second-order-thinking](plugins/craftwork-reasoning/skills/second-order-thinking/SKILL.md), [limit-thinking](plugins/craftwork-reasoning/skills/limit-thinking/SKILL.md) |
 | **Navigate Uncertainty** | [probabilistic-thinking](plugins/craftwork-reasoning/skills/probabilistic-thinking/SKILL.md), [fermi-estimation](plugins/craftwork-reasoning/skills/fermi-estimation/SKILL.md), [scenario-planning](plugins/craftwork-reasoning/skills/scenario-planning/SKILL.md), [game-theoretic-analysis](plugins/craftwork-reasoning/skills/game-theoretic-analysis/SKILL.md) |
 | **Generate Options** | [lateral-thinking](plugins/craftwork-reasoning/skills/lateral-thinking/SKILL.md), [analogical-thinking](plugins/craftwork-reasoning/skills/analogical-thinking/SKILL.md), [bisociative-creativity](plugins/craftwork-reasoning/skills/bisociative-creativity/SKILL.md) |
 | **Decide** | [decision-synthesis](plugins/craftwork-reasoning/skills/decision-synthesis/SKILL.md), [decision-intelligence](plugins/craftwork-reasoning/skills/decision-intelligence/SKILL.md), [retrospective-counterfactual](plugins/craftwork-reasoning/skills/retrospective-counterfactual/SKILL.md), [evidence-synthesis](plugins/craftwork-reasoning/skills/evidence-synthesis/SKILL.md) |
@@ -112,6 +112,8 @@ Skills compose. Common sequences:
 
 **Stuck with no options** — Epistemic Mapping → Lateral Thinking → Analogical Thinking → First Principles
 
+**Scaling decision** — Limit Thinking → Second-Order Thinking → Scenario Planning → Decision Synthesis
+
 **After something goes wrong** — Retrospective/Counterfactual → 5 Whys → Epistemic Mapping → Decision Synthesis
 
 **Full context engineering lifecycle** — Context Gap Analyzer → Agent Instruction Forge → Rule Quality Evaluator → Context Eval → EDD
@@ -138,14 +140,14 @@ skills/                        # flat — npx skills discovers these
 ├── first-principles-thinking/
 ├── agent-instruction-forge/
 ├── context-eval/
-├── ...57 skills total
+├── ...58 skills total
 │   └── SKILL.md
 
 plugins/                       # Claude Code marketplace plugins
 ├── craftwork-reasoning/          → 23 skills (includes orchestrator)
 ├── craftwork-context-engineering/ → 12 skills (includes orchestrator)
 ├── craftwork-professional/       → 23 skills (includes orchestrator)
-└── craftwork-all/                → 57 skills (all orchestrators)
+└── craftwork-all/                → 58 skills (all orchestrators)
 
 routing.yaml                   # single source of truth for skill composition
 scripts/validate-routing.sh    # validates routing.yaml against actual skills

@@ -31,6 +31,7 @@ groups:
       - game-theoretic-analysis
       - inversion-premortem
       - lateral-thinking
+      - limit-thinking
       - probabilistic-thinking
       - reasoning-orchestrator
       - red-teaming
@@ -119,6 +120,26 @@ edges:
   - from: cynefin-framework
     to: scenario-planning
     when: domain is complex
+
+  # ── Reasoning: Limit / trajectory analysis ──
+  - from: limit-thinking
+    to: second-order-thinking
+    when: limit identified, need to trace the path to get there
+  - from: limit-thinking
+    to: first-principles-thinking
+    when: ceiling or collapse found, need to question whether the variable is the right one
+  - from: limit-thinking
+    to: scenario-planning
+    when: extremes identified, need to define the scenario space
+  - from: limit-thinking
+    to: theory-of-constraints
+    when: asymptotic ceiling found, need to identify the constraint
+  - from: limit-thinking
+    to: decision-synthesis
+    when: optimal operating point identified, need to decide
+  - from: second-order-thinking
+    to: limit-thinking
+    when: consequence chain suggests a trajectory worth tracing to its extreme
 
   # ── Reasoning: Adversarial validation ──
   - from: inversion-premortem
@@ -428,6 +449,15 @@ chains:
       - lateral-thinking
       - analogical-thinking
       - first-principles-thinking
+
+  scaling-decision:
+    description: Evaluate what happens when a variable is pushed to its extreme
+    group: reasoning
+    steps:
+      - limit-thinking
+      - second-order-thinking
+      - scenario-planning
+      - decision-synthesis
 
   after-something-went-wrong:
     description: Learn from failure
