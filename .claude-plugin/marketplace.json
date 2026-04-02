@@ -23,15 +23,15 @@
     {
       "name": "craftwork-professional",
       "source": "./plugins/craftwork-professional",
-      "description": "24 skills for architecture, code quality, process design, and communication",
-      "version": "1.1.9",
+      "description": "25 skills for architecture, code quality, process design, and communication",
+      "version": "1.1.10",
       "category": "professional"
     },
     {
       "name": "craftwork-all",
       "source": "./plugins/craftwork-all",
-      "description": "All 60 skills in one plugin",
-      "version": "1.1.12",
+      "description": "All 61 skills in one plugin",
+      "version": "1.1.13",
       "category": "bundle"
     }
   ]

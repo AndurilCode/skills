@@ -21,6 +21,7 @@ Read what the user wants to do and match it to the closest entry below. If ambig
 | Design or run an experiment | `experimental-design` | → `casual-inference` after results |
 | Review code or a PR | `code-review-amplifier` | done |
 | Find incremental improvements, tech debt, or code hygiene issues | `kaizen` | → `execution-planning` or `process-design` |
+| Understand why code is the way it is, audit undocumented fixes | `kintsugi` | → `knowledge-architect` or `technical-writing` |
 | **Planning & Execution** | | |
 | Break a decision into an action plan | `execution-planning` | done |
 | Design or improve a workflow/process | `process-design` | → `execution-planning` |
@@ -136,4 +137,5 @@ Use when a system needs moral and equity analysis, then communication of finding
 | `summarizer` | Summarize documents, articles, transcripts, or multi-source content |
 | `presentation-craft` | Create presentation scripts with narrative arc, slide visuals, and speaker notes |
 | `kaizen` | Continuous improvement audit: find waste, unevenness, and overburden in code |
+| `kintsugi` | Repair visibility audit: find undocumented fixes and add context gold |
 | `knowledge-architect` | Capture decisions, context, and learnings; design team knowledge systems |

@@ -86,6 +86,7 @@ groups:
       - summarizer
       - presentation-craft
       - kaizen
+      - kintsugi
       - knowledge-architect
 
 # Directed composition edges
@@ -355,6 +356,14 @@ edges:
   - from: kaizen
     to: process-design
     when: process waste found, need workflow redesign
+
+  # ── Professional: Repair visibility ──
+  - from: kintsugi
+    to: knowledge-architect
+    when: bare scars found, need to capture institutional knowledge
+  - from: kintsugi
+    to: technical-writing
+    when: gilding backlog needs ADRs or formal documentation
   - from: knowledge-architect
     to: technical-writing
     when: knowledge artifact needs to be a formal document (RFC, ADR, runbook)
