@@ -47,6 +47,8 @@ Read what the user wants to do and match it to the closest entry below. If ambig
 | Capture a decision, learning, or piece of tribal knowledge | `knowledge-architect` | → `technical-writing` if formal doc needed |
 | Set up or improve a team's knowledge system | `knowledge-architect` | done (produces architecture) |
 | Someone is leaving / joining the team | `knowledge-architect` | detect mode for departures, audit for joiners |
+| **Meta** | | |
+| Scan all skills to find the right one(s) for a request | `skill-router` | → matched skill(s) |
 
 ---
 
@@ -138,4 +140,5 @@ Use when a system needs moral and equity analysis, then communication of finding
 | `presentation-craft` | Create presentation scripts with narrative arc, slide visuals, and speaker notes |
 | `kaizen` | Continuous improvement audit: find waste, unevenness, and overburden in code |
 | `kintsugi` | Repair visibility audit: find undocumented fixes and add context gold |
+| `skill-router` | Exhaustive skill scan and composition planning for any request |
 | `knowledge-architect` | Capture decisions, context, and learnings; design team knowledge systems |

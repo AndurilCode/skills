@@ -88,6 +88,7 @@ groups:
       - kaizen
       - kintsugi
       - knowledge-architect
+      - skill-router
 
 # Directed composition edges
 # Each edge: from skill → to skill, with a condition for when it applies.

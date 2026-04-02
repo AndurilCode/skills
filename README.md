@@ -1,6 +1,6 @@
 # Craftwork
 
-61 agent skills for reasoning, context engineering, and professional work. Works with Claude Code, Cursor, Codex, and [40+ agents](https://github.com/vercel-labs/skills#available-agents).
+62 agent skills for reasoning, context engineering, and professional work. Works with Claude Code, Cursor, Codex, and [40+ agents](https://github.com/vercel-labs/skills#available-agents).
 
 ## Install
 
@@ -27,8 +27,8 @@ npx skills add AndurilCode/craftwork -a claude-code
 # Install by category
 /plugin install craftwork-reasoning@craftwork              # 23 thinking frameworks (includes orchestrator)
 /plugin install craftwork-context-engineering@craftwork     # 13 context/agent tools (includes orchestrator)
-/plugin install craftwork-professional@craftwork            # 25 architecture/communication skills (includes orchestrator)
-/plugin install craftwork-all@craftwork                     # everything (61 skills)
+/plugin install craftwork-professional@craftwork            # 26 architecture/communication skills (includes orchestrator)
+/plugin install craftwork-all@craftwork                     # everything (62 skills)
 ```
 
 ---
@@ -69,7 +69,7 @@ Build, evaluate, and debug agent context — instructions, harnesses, evals, and
 | [test-challenger](plugins/craftwork-context-engineering/skills/test-challenger/SKILL.md) | Find false positives in AI-generated tests |
 | **Orchestrate** | [context-engineering-orchestrator](plugins/craftwork-context-engineering/skills/context-engineering-orchestrator/SKILL.md) — entry point, routes to the right context skill |
 
-### professional (25 skills)
+### professional (26 skills)
 
 Architecture, code quality, process design, communication, and leadership. Includes its own orchestrator for guided routing.
 
@@ -99,6 +99,7 @@ Architecture, code quality, process design, communication, and leadership. Inclu
 | [kaizen](plugins/craftwork-professional/skills/kaizen/SKILL.md) | Continuous improvement audit: find waste, unevenness, and overburden in code |
 | [kintsugi](plugins/craftwork-professional/skills/kintsugi/SKILL.md) | Repair visibility audit: find undocumented fixes and add context gold |
 | [knowledge-architect](plugins/craftwork-professional/skills/knowledge-architect/SKILL.md) | Capture decisions, context, and learnings; design team knowledge systems |
+| [skill-router](plugins/craftwork-professional/skills/skill-router/SKILL.md) | Exhaustive skill scan and composition planning for any request |
 | **Orchestrate** | [professional-orchestrator](plugins/craftwork-professional/skills/professional-orchestrator/SKILL.md) — entry point, routes to the right professional skill |
 
 ---
@@ -143,14 +144,14 @@ skills/                        # flat — npx skills discovers these
 ├── first-principles-thinking/
 ├── agent-instruction-forge/
 ├── context-eval/
-├── ...61 skills total
+├── ...62 skills total
 │   └── SKILL.md
 
 plugins/                       # Claude Code marketplace plugins
 ├── craftwork-reasoning/          → 23 skills (includes orchestrator)
 ├── craftwork-context-engineering/ → 13 skills (includes orchestrator)
-├── craftwork-professional/       → 25 skills (includes orchestrator)
-└── craftwork-all/                → 61 skills (all orchestrators)
+├── craftwork-professional/       → 26 skills (includes orchestrator)
+└── craftwork-all/                → 62 skills (all orchestrators)
 
 routing.yaml                   # single source of truth for skill composition
 scripts/validate-routing.sh    # validates routing.yaml against actual skills
